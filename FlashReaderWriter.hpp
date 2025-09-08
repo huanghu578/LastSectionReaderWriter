@@ -13,7 +13,7 @@ typedef struct {
 typedef struct {
     char bytes[MAX_BYTES_TO_READWRITE];
     uint32_t len;
-}CharsToReadWrite;
+}chars2read_write_t;
 
 class FlashReaderWriter : private FlashIAP {
     public:
@@ -21,8 +21,9 @@ class FlashReaderWriter : private FlashIAP {
         uint32_t lastSectorStart;
         bool writeU8sToLastSector(U8ToReadWrite data);
         U8ToReadWrite *readU8sFromLastSector(uint32_t lenToRead=MAX_BYTES_TO_READWRITE);
-        bool writeCharsToLastSector(CharsToReadWrite data);
-        CharsToReadWrite *readCharsFromLastSector(uint32_t lenToRead=MAX_BYTES_TO_READWRITE);
+        bool writeCharsToLastSector(chars2read_write_t data);
+        chars2read_write_t *readCharsFromLastSector(uint32_t lenToRead=MAX_BYTES_TO_READWRITE);
+        void PrintSetting(const chars2read_write_t& st);
 
     private:
         uint32_t _flashStartAddress;
