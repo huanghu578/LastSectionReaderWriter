@@ -20,8 +20,8 @@ void ResetCurrentSetting();
 class LastSectionReaderWriter : private FlashIAP {
    public:
     LastSectionReaderWriter();
-    void LastSectionReaderWriter::WriteCurrentSetting();
-    void LastSectionReaderWriter::ReadCurrentSetting();
+    void WriteCurrentSetting();
+    void ReadCurrentSetting();
    private:
     uint32_t _lastSectorStart;
     uint32_t _flashStartAddress;
