@@ -13,14 +13,15 @@ typedef struct {
     array<char, MAX_BYTES_TO_PASSWORD> passwordTip;
     char locked;
 } setting_t;
+extern setting_t current_setting;
+void PrintCurrentSetting();
+void ResetCurrentSetting();
 
 class LastSectionReaderWriter : private FlashIAP {
    public:
     LastSectionReaderWriter();
     void LastSectionReaderWriter::WriteCurrentSetting();
     void LastSectionReaderWriter::ReadCurrentSetting();
-    PrintSetting(array<char, MAX_BYTES_TO_READWRITE> data);
-
    private:
     uint32_t _lastSectorStart;
     uint32_t _flashStartAddress;
