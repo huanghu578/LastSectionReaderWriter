@@ -1,6 +1,5 @@
 #include "FlashReaderWriter.hpp"
 #include "TgMbedHelper.h"
-
 FlashReaderWriter::FlashReaderWriter(){
     if(this->init()!=0){        
         TG_ERR_FILE_FUN_LINE();
@@ -14,47 +13,25 @@ FlashReaderWriter::FlashReaderWriter(){
     lastSectorStart    = this->_flashEndAddress-this->_lastSectorSize;
     TG_DEBUG_FILE_FUN_LINE(ok);    
 }
-
-chars2read_write_t* FlashReaderWriter::readCharsFromLastSector(uint32_t lenToRead){
-    auto dataHolder=(chars2read_write_t*) malloc(sizeof(chars2read_write_t));
-    memset((void*)dataHolder, 0, sizeof(chars2read_write_t));    
-    if(this->read(dataHolder->bytes, lastSectorStart, lenToRead) != 0){
-        TG_ERR_FILE_FUN_LINE();
-    }
-    dataHolder->len = lenToRead;    
-    TG_DEBUG_FILE_FUN_LINE(ok); 
-    return dataHolder;
-}
-
-bool FlashReaderWriter::writeCharsToLastSector(chars2read_write_t data){    
-    if( _eraseOneSector(lastSectorStart) == true){
-        if(this->program(data.bytes, lastSectorStart, data.len)!=0){
+bool FlashReaderWriter::writeCharsToLastSector(
+    array<char, MAX_BYTES_TO_READWRITE> data) {
+    if (_eraseOneSector(lastSectorStart) == true) {
+        if (this->program(data.begin(), lastSectorStart, data.size()) != 0) {
             TG_ERR_FILE_FUN_LINE();
         }
-    }    
-    TG_DEBUG_FILE_FUN_LINE(ok); 
-    return true;    
+    }
+    TG_DEBUG_FILE_FUN_LINE(ok);
+    return true;
 }
 
-U8ToReadWrite *FlashReaderWriter::readU8sFromLastSector(uint32_t lenToRead){
-    auto dataHolder=(U8ToReadWrite*) malloc(sizeof(U8ToReadWrite));
-    memset((void*)dataHolder, 0, sizeof(U8ToReadWrite));
-    if(this->read(dataHolder->bytes, lastSectorStart, lenToRead) != 0){
+array<char, MAX_BYTES_TO_READWRITE>
+FlashReaderWriter::readCharsFromLastSector() {
+    array<char, MAX_BYTES_TO_READWRITE> data ={0};    
+    if (this->read(data.begin(), lastSectorStart, data.size()) != 0) {
         TG_ERR_FILE_FUN_LINE();
-    }
-    dataHolder->len = lenToRead;
+    }        
     TG_DEBUG_FILE_FUN_LINE(ok); 
-    return dataHolder;
-}
-
-bool FlashReaderWriter::writeU8sToLastSector(U8ToReadWrite data){    
-    if( _eraseOneSector(lastSectorStart) == true){
-        if(this->program(data.bytes, lastSectorStart, data.len)!=0){
-            TG_ERR_FILE_FUN_LINE();
-        }        
-    }
-    TG_DEBUG_FILE_FUN_LINE(ok); 
-    return true;    
+    return data;
 }
 
 bool FlashReaderWriter::_eraseOneSector(uint32_t startAddressOfSector){    
@@ -64,8 +41,8 @@ bool FlashReaderWriter::_eraseOneSector(uint32_t startAddressOfSector){
     return true;
 }
 
-void FlashReaderWriter::PrintSetting(const chars2read_write_t& st){    
-    for(auto c:st.bytes){
+void FlashReaderWriter::PrintSetting(array<char, MAX_BYTES_TO_READWRITE> data) {
+    for(auto c:data){
         printf("%c",c);
     }
     printf("\n");
