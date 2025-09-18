@@ -13,7 +13,7 @@ class FlashReaderWriter : private FlashIAP {
     PrintSetting(array<char, MAX_BYTES_TO_READWRITE> data);
 
    private:
-    uint32_t lastSectorStart;
+    uint32_t _lastSectorStart;
     uint32_t _flashStartAddress;
     uint32_t _flashSize;
     uint32_t _pageSize;

@@ -10,13 +10,13 @@ FlashReaderWriter::FlashReaderWriter(){
     _lastSectorSize    = this->get_sector_size(this->_flashStartAddress + this->_flashSize - 1);    
     _flashEndAddress   = this->_flashStartAddress + this->_flashSize;    
     _sectorSize        = this->get_sector_size(this->_flashEndAddress-1);
-    lastSectorStart    = this->_flashEndAddress-this->_lastSectorSize;
+    _lastSectorStart    = this->_flashEndAddress-this->_lastSectorSize;
     TG_DEBUG_FILE_FUN_LINE(ok);    
 }
 bool FlashReaderWriter::writeCharsToLastSector(
     array<char, MAX_BYTES_TO_READWRITE> data) {
     if (_eraseOneSector(lastSectorStart) == true) {
-        if (this->program(data.begin(), lastSectorStart, data.size()) != 0) {
+        if (this->program(data.begin(), _lastSectorStart, data.size()) != 0) {
             TG_ERR_FILE_FUN_LINE();
         }
     }
@@ -27,7 +27,7 @@ bool FlashReaderWriter::writeCharsToLastSector(
 array<char, MAX_BYTES_TO_READWRITE>
 FlashReaderWriter::readCharsFromLastSector() {
     array<char, MAX_BYTES_TO_READWRITE> data ={0};    
-    if (this->read(data.begin(), lastSectorStart, data.size()) != 0) {
+    if (this->read(data.begin(), _lastSectorStart, data.size()) != 0) {
         TG_ERR_FILE_FUN_LINE();
     }        
     TG_DEBUG_FILE_FUN_LINE(ok); 
