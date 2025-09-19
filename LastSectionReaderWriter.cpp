@@ -22,6 +22,7 @@ void PrintCurrentSetting() {
 void ResetCurrentSetting() {
     current_setting = {INIT_PASSWORD, INIT_TIP, LOCKED255, MODE255,
                        INIT_MAX_TRY, 0};
+    PrintCurrentSetting();
 }
 
 bool LastSectionReaderWriter::_eraseLastSector() {
@@ -51,6 +52,7 @@ void LastSectionReaderWriter::WriteCurrentSetting() {
             TG_ERR_FILE_FUN_LINE();
         }
     }
+    PrintCurrentSetting();
     TG_DEBUG_FILE_FUN_LINE(ok);
 }
 
@@ -59,5 +61,6 @@ void LastSectionReaderWriter::ReadCurrentSetting() {
                    sizeof(setting_t)) != 0) {
         TG_ERR_FILE_FUN_LINE();
     }
+    PrintCurrentSetting();
     TG_DEBUG_FILE_FUN_LINE(ok);
 }

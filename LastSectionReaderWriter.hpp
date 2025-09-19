@@ -3,10 +3,10 @@
 #include <inttypes.h>
 #include <array>
 #include "mbed.h"
-#define LOCKED0                 0   // 已锁定
-#define LOCKED255               255 // 未锁定
-#define MODE0                   0   // 次数模式
-#define MODE255                 255 // 正常模式
+#define LOCKED0                 0x00   // 已锁定
+#define LOCKED255               0xFF // 未锁定
+#define MODE0                   0x00 // 次数模式
+#define MODE255                 0xFF // 正常模式
 #define INIT_MAX_TRY            20
 #define INIT_PASSWORD           "197001010000000"
 #define INIT_TIP                "TIME_STAMP_OF_UNIX"
@@ -26,7 +26,7 @@ typedef struct {
     uint16_t current_try;
 } setting_t;
 
-void PrintCurrentSetting();
+//void PrintCurrentSetting();
 void ResetCurrentSetting();
 
 class LastSectionReaderWriter : private FlashIAP {
