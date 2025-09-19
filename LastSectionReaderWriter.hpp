@@ -16,8 +16,7 @@
 #define VERSION             202608
 #define MAX_PASSWORD_TIME   10
 #define MAX_BYTES_TO_PASSWORD   (256)
-//#define MAX_BYTES_TO_READWRITE  (MAX_BYTES_TO_PASSWORD * 2 + 3) //TODO
-constexpr uint32_t MAX_BYTES_TO_READWRITE =sizof( setting_t);
+
 
 typedef struct {
     array<char, MAX_BYTES_TO_PASSWORD> password;

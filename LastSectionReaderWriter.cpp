@@ -43,7 +43,8 @@ LastSectionReaderWriter::LastSectionReaderWriter() {
 }
 void LastSectionReaderWriter::WriteCurrentSetting() {
     if (_eraseLastSector() == true) {
-        if (this->program(&current_setting,this->_lastSectorStart,MAX_BYTES_TO_READWRITE) != 0) {
+        if (this->program(&current_setting, this->_lastSectorStart,
+                          sizof(setting_t)) != 0) {
             TG_ERR_FILE_FUN_LINE();
         }
     }
@@ -51,7 +52,7 @@ void LastSectionReaderWriter::WriteCurrentSetting() {
 }
 
 void LastSectionReaderWriter::ReadCurrentSetting() {
-    if (this->read(&current_setting, this->_lastSectorStart, MAX_BYTES_TO_READWRITE) != 0) {
+    if (this->read(&current_setting, this->_lastSectorStart, sizof( setting_t)) != 0) {
         TG_ERR_FILE_FUN_LINE();
     }
     TG_DEBUG_FILE_FUN_LINE(ok);
