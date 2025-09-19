@@ -2,10 +2,10 @@
 #pragma once
 
 #include "mbed.h"
-#define LOCKED0                 0
-#define LOCKED255               255
-#define MODE0                   0
-#define MODE255                 255
+#define LOCKED0                 0   // 已锁定
+#define LOCKED255               255 // 未锁定
+#define MODE0                   0   // 次数模式
+#define MODE255                 255 // 正常模式
 #define INIT_MAX_TRY            20
 #define INIT_PASSWORD           "197001010000000"
 #define INIT_TIP                "TIME_STAMP_OF_UNIX"
