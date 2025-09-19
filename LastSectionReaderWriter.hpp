@@ -15,8 +15,7 @@
 #define RID                 0x0001
 #define VERSION             202608
 #define MAX_PASSWORD_TIME   10
-#define MAX_BYTES_TO_PASSWORD   (256)
-
+#define MAX_BYTES_TO_PASSWORD   256
 
 typedef struct {
     array<char, MAX_BYTES_TO_PASSWORD> password;
