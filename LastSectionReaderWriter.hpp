@@ -8,8 +8,8 @@
 #define NOT_ENABLE_TRY      255
 #define ENABLE_TRY          1
 #define INIT_TRY_TIME       10
-#define INIT_PASSWORD       "1970b01ww01"
-#define INIT_TIP            "BirthdayWith1_2"
+#define INIT_PASSWORD       "197001010000000"
+#define INIT_TIP            "TIME_STAMP_OF_UNIX"
 #define VID                 0x1234
 #define PID                 0x4321
 #define RID                 0x0001
