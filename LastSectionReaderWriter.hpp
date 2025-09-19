@@ -1,13 +1,12 @@
 /// 读写MCU内最后一个section的工具
 #pragma once
-#include <inttypes.h>
-#include <array>
+
 #include "mbed.h"
-#define LOCKED                  0
-#define NOT_LOCKED              255
-#define NORMAL_MODE             255
-#define TRIAL_MODE              0
-#define MAX_TRY                 10
+#define LOCKED0                 0
+#define LOCKED255               255
+#define MODE0                   0
+#define MODE255                 255
+#define INIT_MAX_TRY            20
 #define INIT_PASSWORD           "197001010000000"
 #define INIT_TIP                "TIME_STAMP_OF_UNIX"
 #define VID                     0x1234
@@ -22,7 +21,8 @@ typedef struct {
     array<char, MAX_BYTES_TO_PASSWORD> passwordTip;
     char locked;
     char mode;
-    char max_try;
+    uint16_t max_try;
+    uint16_t current_try;
 } setting_t;
 
 void PrintCurrentSetting();

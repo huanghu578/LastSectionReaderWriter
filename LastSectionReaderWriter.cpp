@@ -13,12 +13,15 @@ void PrintCurrentSetting() {
         printf("%c", c);
     }
     printf("\n");
-    printf("Locked: %d\n", current_setting.locked);  // TODO
+    printf("Locked: %d\n", current_setting.locked);  
+    printf("Mode: %d\n", current_setting.mode);
+    printf("Max Try: %d\n", current_setting.max_try);
+    printf("Current Try: %d\n", current_setting.current_try);
 }
 
 void ResetCurrentSetting() {
-    current_setting = {INIT_PASSWORD, INIT_TIP, NOT_LOCKED, NORMAL_MODE,
-                       MAX_TRY};
+    current_setting = {INIT_PASSWORD, INIT_TIP, LOCKED255, MODE255,
+                       INIT_MAX_TRY, 0};
 }
 
 bool LastSectionReaderWriter::_eraseLastSector() {
