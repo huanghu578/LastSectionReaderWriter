@@ -1,6 +1,7 @@
 /// 读写MCU内最后一个section的工具
 #pragma once
-
+#include <inttypes.h>
+#include <array>
 #include "mbed.h"
 #define LOCKED0                 0   // 已锁定
 #define LOCKED255               255 // 未锁定
