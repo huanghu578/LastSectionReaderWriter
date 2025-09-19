@@ -3,11 +3,11 @@
 #include <inttypes.h>
 #include <array>
 #include "mbed.h"
-#define LOCKED                  1
+#define LOCKED                  0
 #define NOT_LOCKED              255
-#define NOT_ENABLE_TRY          255
-#define ENABLE_TRY              1
-#define INIT_TRY_TIME           10
+#define NORMAL_MODE             255
+#define TRIAL_MODE              0
+#define MAX_TRY                 10
 #define INIT_PASSWORD           "197001010000000"
 #define INIT_TIP                "TIME_STAMP_OF_UNIX"
 #define VID                     0x1234
@@ -21,8 +21,8 @@ typedef struct {
     array<char, MAX_BYTES_TO_PASSWORD> password;
     array<char, MAX_BYTES_TO_PASSWORD> passwordTip;
     char locked;
-    char dongle_only_for_try;
-    char try_time;
+    char mode;
+    char max_try;
 } setting_t;
 
 void PrintCurrentSetting();

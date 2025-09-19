@@ -17,8 +17,8 @@ void PrintCurrentSetting() {
 }
 
 void ResetCurrentSetting() {
-    current_setting = {INIT_PASSWORD, INIT_TIP, NOT_LOCKED, NOT_ENABLE_TRY,
-                       INIT_TRY_TIME};
+    current_setting = {INIT_PASSWORD, INIT_TIP, NOT_LOCKED, NORMAL_MODE,
+                       MAX_TRY};
 }
 
 bool LastSectionReaderWriter::_eraseLastSector() {
