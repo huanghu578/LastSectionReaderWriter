@@ -13,10 +13,10 @@ void PrintCurrentSetting() {
         printf("%c", c);
     }
     printf("\n");
-    printf("Locked: %d\n", current_setting.locked);//TODO
+    printf("Locked: %d\n", current_setting.locked);  // TODO
 }
 
-void ResetCurrentSetting(){
+void ResetCurrentSetting() {
     current_setting = {INIT_PASSWORD, INIT_TIP, NOT_LOCKED, NOT_ENABLE_TRY,
                        INIT_TRY_TIME};
 }
@@ -44,7 +44,7 @@ LastSectionReaderWriter::LastSectionReaderWriter() {
 void LastSectionReaderWriter::WriteCurrentSetting() {
     if (_eraseLastSector() == true) {
         if (this->program(&current_setting, this->_lastSectorStart,
-                          sizof(setting_t)) != 0) {
+                          sizeof(setting_t)) != 0) {
             TG_ERR_FILE_FUN_LINE();
         }
     }
@@ -52,7 +52,8 @@ void LastSectionReaderWriter::WriteCurrentSetting() {
 }
 
 void LastSectionReaderWriter::ReadCurrentSetting() {
-    if (this->read(&current_setting, this->_lastSectorStart, sizof( setting_t)) != 0) {
+    if (this->read(&current_setting, this->_lastSectorStart,
+                   sizeof(setting_t)) != 0) {
         TG_ERR_FILE_FUN_LINE();
     }
     TG_DEBUG_FILE_FUN_LINE(ok);
