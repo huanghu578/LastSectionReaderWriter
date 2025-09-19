@@ -3,18 +3,18 @@
 #include <inttypes.h>
 #include <array>
 #include "mbed.h"
-#define LOCKED              1
-#define NOT_LOCKED          255
-#define NOT_ENABLE_TRY      255
-#define ENABLE_TRY          1
-#define INIT_TRY_TIME       10
-#define INIT_PASSWORD       "197001010000000"
-#define INIT_TIP            "TIME_STAMP_OF_UNIX"
-#define VID                 0x1234
-#define PID                 0x4321
-#define RID                 0x0001
-#define VERSION             202608
-#define MAX_PASSWORD_TIME   10
+#define LOCKED                  1
+#define NOT_LOCKED              255
+#define NOT_ENABLE_TRY          255
+#define ENABLE_TRY              1
+#define INIT_TRY_TIME           10
+#define INIT_PASSWORD           "197001010000000"
+#define INIT_TIP                "TIME_STAMP_OF_UNIX"
+#define VID                     0x1234
+#define PID                     0x4321
+#define RID                     0x0001
+#define VERSION                 202608
+#define MAX_PASSWORD_TIME       10
 #define MAX_BYTES_TO_PASSWORD   256
 
 typedef struct {
