@@ -14,16 +14,23 @@
 #define PID                     0x4321
 #define RID                     0x0001
 #define VERSION                 202608
+#define TYPE                    100     // 类型,不同档次产品的区分
 #define MAX_PASSWORD_TIME       10
 #define MAX_BYTES_TO_PASSWORD   256
+#define AUTO_INIT_CURRENT_SETTING              0xFFFFFFFF
+typedef struct {
+    char mode;
+    uint16_t max_try;
+    uint16_t current_try;
+    uint16_t block_code;
+} block_t;
 
 typedef struct {
     array<char, MAX_BYTES_TO_PASSWORD> password;
     array<char, MAX_BYTES_TO_PASSWORD> passwordTip;
+    uint32_t id;    //作为自动初始化标记，当0xFFFFFFFF时，表示未初始化
     char locked;
-    char mode;
-    uint16_t max_try;
-    uint16_t current_try;
+    array<block_t, TYPE> blocks;    //用block的数量来区分档次
 } setting_t;
 
 

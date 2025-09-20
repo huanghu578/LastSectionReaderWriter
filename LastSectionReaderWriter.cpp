@@ -1,27 +1,32 @@
 #include "LastSectionReaderWriter.hpp"
 #include "TgMbedHelper.h"
+#include <time.h>
 setting_t current_setting;
 
 void PrintCurrentSetting() {
-    printf("Password: ");
-    for (auto c : current_setting.password) {
-        printf("%c", c);
+    printf("Password:%s \n", current_setting.password.data());    
+    printf("Password Tip:%s \n", current_setting.passwordTip.data());    
+    printf("Locked: %d\n", current_setting.locked);
+    printf("ID: %d\n", current_setting.id);
+    for (size_t i = 0; i < current_setting.blocks.size(); i++)
+    {
+        printf("Block %zu: Mode:%d, Max Try:%d, Current Try:%d, Block code:%d\n", i,
+               current_setting.blocks[i].mode,
+               current_setting.blocks[i].max_try,
+               current_setting.blocks[i].current_try,
+               current_setting.blocks[i].block_code);
     }
-    printf("\n");
-    printf("Password Tip: ");
-    for (auto c : current_setting.passwordTip) {
-        printf("%c", c);
-    }
-    printf("\n");
-    printf("Locked: %d\n", current_setting.locked);  
-    printf("Mode: %d\n", current_setting.mode);
-    printf("Max Try: %d\n", current_setting.max_try);
-    printf("Current Try: %d\n", current_setting.current_try);
 }
 
 void ResetCurrentSetting() {
-    current_setting = {INIT_PASSWORD, INIT_TIP, LOCKED255, MODE255,
-                       INIT_MAX_TRY, 0};
+    current_setting.password =INIT_PASSWORD;
+    current_setting.passwordTip = INIT_TIP;
+    current_setting.locked = LOCKED255;
+    current_setting.id = (uint32_t)time(NULL);
+    for (size_t i = 0; i < current_setting.blocks.size(); i++)
+    {
+        current_setting.blocks[i] = {MODE255, INIT_MAX_TRY, 0, i};
+    }
     PrintCurrentSetting();
 }
 
@@ -40,6 +45,9 @@ LastSectionReaderWriter::LastSectionReaderWriter() {
     _pageSize = this->get_page_size();
     _lastSectorSize =
         this->get_sector_size(this->_flashStartAddress + this->_flashSize - 1);
+    if (sizeof(setting_t) > _lastSectorSize) {
+        TG_ERR_FILE_FUN_LINE(sizeof(setting_t) > _lastSectorSize);
+    }
     _flashEndAddress = this->_flashStartAddress + this->_flashSize;
     _sectorSize = this->get_sector_size(this->_flashEndAddress - 1);
     _lastSectorStart = this->_flashEndAddress - this->_lastSectorSize;
@@ -60,6 +68,9 @@ void LastSectionReaderWriter::ReadCurrentSetting() {
     if (this->read(&current_setting, this->_lastSectorStart,
                    sizeof(setting_t)) != 0) {
         TG_ERR_FILE_FUN_LINE();
+    }
+    if (current_setting.id == AUTO_INIT_CURRENT_SETTING) {//自动初始化
+        ResetCurrentSetting();
     }
     PrintCurrentSetting();
     TG_DEBUG_FILE_FUN_LINE(ok);
