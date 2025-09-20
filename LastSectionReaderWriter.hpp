@@ -26,7 +26,7 @@ typedef struct {
     uint16_t current_try;
 } setting_t;
 
-//void PrintCurrentSetting();
+
 void ResetCurrentSetting();
 
 class LastSectionReaderWriter : private FlashIAP {
