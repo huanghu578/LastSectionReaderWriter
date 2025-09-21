@@ -2,7 +2,6 @@
 #pragma once
 #include <inttypes.h>
 #include <array>
-#include "mbed.h"
 #define LOCKED0                 0x00   // 已锁定
 #define LOCKED255               0xFF // 未锁定
 #define MODE0                   0x00 // 次数模式
@@ -17,9 +16,17 @@
 #define TYPE                    100     // 类型,不同档次产品的区分
 #define MAX_PASSWORD_TIME       10
 #define MAX_BYTES_TO_PASSWORD   256
-#define AUTO_INIT_CURRENT_SETTING              0xFFFFFFFF
+#define AUTO_INIT_CURRENT_SETTING_ID              0xFFFFFFFF
+#ifdef MBED_VERSION
+    #include "TgMbedHelper.h"
+    #include "mbed.h"
+#endif
+#include <time.h>
+#include <cstdio>
+#include <cstring>
+using namespace std;
 typedef struct {
-    char mode;
+    uint8_t mode;
     uint16_t max_try;
     uint16_t current_try;
     uint16_t block_code;
@@ -29,13 +36,13 @@ typedef struct {
     array<char, MAX_BYTES_TO_PASSWORD> password;
     array<char, MAX_BYTES_TO_PASSWORD> passwordTip;
     uint32_t id;    //作为自动初始化标记，当0xFFFFFFFF时，表示未初始化
-    char locked;
+    uint8_t locked;
     array<block_t, TYPE> blocks;    //用block的数量来区分档次
 } setting_t;
+void InitCurrentSetting();
+extern setting_t current_setting;
 
-
-void ResetCurrentSetting();
-
+#ifdef MBED_VERSION
 class LastSectionReaderWriter : private FlashIAP {
    public:
     LastSectionReaderWriter();
@@ -52,5 +59,4 @@ class LastSectionReaderWriter : private FlashIAP {
     uint32_t _whereToWrite;
     bool _eraseLastSector();
 };
-
-extern setting_t current_setting;
+#endif
