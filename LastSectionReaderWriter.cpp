@@ -1,4 +1,5 @@
 #include "LastSectionReaderWriter.hpp"
+#include <cstring>
 setting_t current_setting;
 
 void PrintCurrentSetting() {
@@ -17,10 +18,12 @@ void PrintCurrentSetting() {
 }
 
 void InitCurrentSetting() {
-    const char* src = INIT_PASSWORD;        
-    std::copy(src, src + std::strlen(src) + 1, current_setting.password.begin()); // +1,包括'\0'
+    const char* src = INIT_PASSWORD;
+    string srcs=string(src);    
+    std::copy(src, src + srcs.length() + 1, current_setting.password.begin()); // +1,包括'\0'
     const char* src2 = INIT_TIP;
-    std::copy(src2, src2 + std::strlen(src2) + 1, current_setting.passwordTip.begin()); // +1,包括'\0'
+    string srcs2=string(src2);
+    std::copy(src2, src2 + srcs2.length() + 1, current_setting.passwordTip.begin()); // +1,包括'\0'
     current_setting.locked = LOCKED255;
     current_setting.id = (uint32_t)time(NULL);
     for (uint16_t seed = 0; seed < TYPE; seed++)
@@ -29,10 +32,10 @@ void InitCurrentSetting() {
     }
 }
 
-#ifdef MBED_VERSION
+#ifdef __MBED__
 bool LastSectionReaderWriter::_eraseLastSector() {
     if (this->erase(this->_lastSectorStart, this->_sectorSize) != 0) {
-        #ifdef MBED_VERSION
+        #ifdef __MBED__
             TG_ERR_FILE_FUN_LINE();
         #endif        
     }
@@ -40,7 +43,7 @@ bool LastSectionReaderWriter::_eraseLastSector() {
 }
 LastSectionReaderWriter::LastSectionReaderWriter() {
     if (this->init() != 0) {
-        #ifdef MBED_VERSION
+        #ifdef __MBED__
             TG_ERR_FILE_FUN_LINE();
         #endif
     }
@@ -50,7 +53,7 @@ LastSectionReaderWriter::LastSectionReaderWriter() {
     _lastSectorSize =
         this->get_sector_size(this->_flashStartAddress + this->_flashSize - 1);
     if (sizeof(setting_t) > _lastSectorSize) {
-        #ifdef MBED_VERSION
+        #ifdef __MBED__
             TG_ERR_FILE_FUN_LINE();
         #endif
     }
@@ -62,20 +65,20 @@ LastSectionReaderWriter::LastSectionReaderWriter() {
 void LastSectionReaderWriter::WriteCurrentSetting() {
     if (_eraseLastSector() == true) {
         if (this->program(&current_setting, this->_lastSectorStart,sizeof(setting_t)) != 0) {
-            #ifdef MBED_VERSION
+            #ifdef __MBED__
                 TG_ERR_FILE_FUN_LINE();
             #endif
         }
     }
     PrintCurrentSetting();    
-    #ifdef MBED_VERSION
+    #ifdef __MBED__
         TG_DEBUG_FILE_FUN_LINE(ok);
     #endif    
 }
 
 void LastSectionReaderWriter::ReadCurrentSetting() {
     if (this->read(&current_setting, this->_lastSectorStart,sizeof(setting_t)) != 0) {
-        #ifdef MBED_VERSION
+        #ifdef __MBED__
             TG_ERR_FILE_FUN_LINE();
         #endif
     }
@@ -85,7 +88,7 @@ void LastSectionReaderWriter::ReadCurrentSetting() {
     }else{
         InitCurrentSetting();
     }    
-    #ifdef MBED_VERSION
+    #ifdef __MBED__
         TG_DEBUG_FILE_FUN_LINE(ok);
     #endif  
 }

@@ -35,7 +35,7 @@ bool read_response(uint8_t block_index,string query_code,uint64_t &response){
     return true;
 }
 
-
+#ifdef __MBED__
 bool write_block(uint8_t block_index,block_t b){
     if(block_index < TYPE) {
         current_setting.blocks[block_index] = b;
@@ -53,9 +53,9 @@ bool write_password(string old_password,string new_password,string new_tip){
        (new_tip.size() < MAX_BYTES_TO_PASSWORD))
     {
         const char* src = new_password.c_str();        
-        std::copy(src, src + std::strlen(src) + 1, current_setting.password.begin()); // 包括'\0'
+        std::copy(src, src + new_password.length() + 1, current_setting.password.begin()); // 包括'\0'
         const char* src2 = new_tip.c_str();        
-        std::copy(src2, src2 + std::strlen(src2) + 1, current_setting.passwordTip.begin()); // 包括'\0'
+        std::copy(src2, src2 + new_tip.length() + 1, current_setting.passwordTip.begin()); // 包括'\0'
         auto f=new LastSectionReaderWriter();
         f->WriteCurrentSetting();
         delete f;
@@ -71,4 +71,4 @@ bool write_init_setting(){
     delete f;
     return true;
 }
-
+#endif

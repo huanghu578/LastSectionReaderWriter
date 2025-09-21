@@ -17,13 +17,13 @@
 #define MAX_PASSWORD_TIME       10
 #define MAX_BYTES_TO_PASSWORD   256
 #define AUTO_INIT_CURRENT_SETTING_ID              0xFFFFFFFF
-#ifdef MBED_VERSION
+#ifdef __MBED__
     #include "TgMbedHelper.h"
     #include "mbed.h"
 #endif
 #include <time.h>
 #include <cstdio>
-#include <cstring>
+#include <string>
 using namespace std;
 typedef struct {
     uint8_t mode;
@@ -42,7 +42,7 @@ typedef struct {
 void InitCurrentSetting();
 extern setting_t current_setting;
 
-#ifdef MBED_VERSION
+#ifdef __MBED__
 class LastSectionReaderWriter : private FlashIAP {
    public:
     LastSectionReaderWriter();
