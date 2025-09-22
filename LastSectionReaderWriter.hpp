@@ -2,6 +2,13 @@
 #pragma once
 #include <inttypes.h>
 #include <array>
+#ifdef __MBED__
+    #include "TgMbedHelper.h"
+    #include "mbed.h"
+#endif
+#include <time.h>
+#include <cstdio>
+#include <string>
 #define LOCKED0                 0x00   // 已锁定
 #define LOCKED255               0xFF // 未锁定
 #define MODE0                   0x00 // 次数模式
@@ -17,29 +24,26 @@
 #define MAX_PASSWORD_TIME       10
 #define MAX_BYTES_TO_PASSWORD   256
 #define AUTO_INIT_CURRENT_SETTING_ID              0xFFFFFFFF
-#ifdef __MBED__
-    #include "TgMbedHelper.h"
-    #include "mbed.h"
-#endif
-#include <time.h>
-#include <cstdio>
-#include <string>
 using namespace std;
 typedef struct {
     uint8_t mode;
     uint16_t max_try;
     uint16_t current_try;
-    uint16_t block_code;
-} block_t;
+    uint32_t block_seed;
+} block_t;//TODO:结合RAM，考虑在block_t中增加密码及其提示
 
 typedef struct {
     array<char, MAX_BYTES_TO_PASSWORD> password;
     array<char, MAX_BYTES_TO_PASSWORD> passwordTip;
     uint32_t id;    //作为自动初始化标记，当0xFFFFFFFF时，表示未初始化
     uint8_t locked;
-    array<block_t, TYPE> blocks;    //用block的数量来区分档次
+    uint8_t password_try_time; 
+    array<block_t, TYPE> blocks;  // 用block的数量来区分档次
 } setting_t;
 void InitCurrentSetting();
+void write_current_setting();
+void read_current_setting();
+
 extern setting_t current_setting;
 
 #ifdef __MBED__

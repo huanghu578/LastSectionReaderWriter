@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
-std::string titleStr;
-
+extern std::string titleStr;
 extern const char* help_str;
 extern const char* help_str2;
 extern const char* remark_str1;

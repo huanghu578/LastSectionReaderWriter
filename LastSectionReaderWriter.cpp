@@ -1,19 +1,17 @@
 #include "LastSectionReaderWriter.hpp"
 #include <cstring>
 setting_t current_setting;
-
 void PrintCurrentSetting() {
     printf("Password:%s \n", current_setting.password.data());    
     printf("Password Tip:%s \n", current_setting.passwordTip.data());    
     printf("Locked: %d\n", current_setting.locked);
     printf("ID: %d\n", current_setting.id);
-    for (uint16_t i = 0; i < current_setting.blocks.size(); i++)
-    {
-        printf("Block %zu: Mode:%d, Max Try:%d, Current Try:%d, Block code:%d\n", i,
-               current_setting.blocks[i].mode,
-               current_setting.blocks[i].max_try,
-               current_setting.blocks[i].current_try,
-               current_setting.blocks[i].block_code);
+    for (uint16_t i = 1; i <= TYPE; i++) {
+        printf("Block %zu: Mode:%d, Max Try:%d, Current Try:%d, Block Seed:%s\n", i,
+               current_setting.blocks[i-1].mode,
+               current_setting.blocks[i-1].max_try,
+               current_setting.blocks[i-1].current_try,
+               "xxx");
     }
 }
 
@@ -26,13 +24,23 @@ void InitCurrentSetting() {
     std::copy(src2, src2 + srcs2.length() + 1, current_setting.passwordTip.begin()); // +1,包括'\0'
     current_setting.locked = LOCKED255;
     current_setting.id = (uint32_t)time(NULL);
-    for (uint16_t seed = 0; seed < TYPE; seed++)
+    current_setting.password_try_time=0;    
+    for (uint8_t seed = 1; seed <= TYPE; seed++)
     {
-        current_setting.blocks[seed] = {MODE255, INIT_MAX_TRY, 0, seed};
+        current_setting.blocks[seed-1] = {MODE255, INIT_MAX_TRY, 0, seed};
     }
 }
-
 #ifdef __MBED__
+void write_current_setting(){
+    auto f = new LastSectionReaderWriter();
+    f->WriteCurrentSetting();
+    delete f;
+}
+void read_current_setting() {
+    auto f = new LastSectionReaderWriter();
+    f->ReadCurrentSetting();
+    delete f;
+}
 bool LastSectionReaderWriter::_eraseLastSector() {
     if (this->erase(this->_lastSectorStart, this->_sectorSize) != 0) {
         #ifdef __MBED__
@@ -85,9 +93,7 @@ void LastSectionReaderWriter::ReadCurrentSetting() {
     if (current_setting.id == AUTO_INIT_CURRENT_SETTING_ID) {//自动初始化
         InitCurrentSetting();
         WriteCurrentSetting();
-    }else{
-        InitCurrentSetting();
-    }    
+    }
     #ifdef __MBED__
         TG_DEBUG_FILE_FUN_LINE(ok);
     #endif  
