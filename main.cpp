@@ -9,8 +9,7 @@ int main() {
         LedLongOn(led);
     }
 #endif
-    read_current_setting();
-    serial.sync();
+    read_current_setting();    
     while (1) {
         uint8_t ptr[800];//783=256*3+13
         uint32_t readLen;
@@ -18,31 +17,32 @@ int main() {
         std::string serialRead(reinterpret_cast<const char*>(&ptr[0]), readLen);
         vector<string> parts = split(serialRead, " ");
         if (readLen > 0) {
-            serial.printf("%s\n", to_lower(trim(parts[0])).c_str());
+            auto command = to_lower(trim(parts[0]));
+            serial.printf("%s\n", command.c_str());
             if (parts.size() == 1){ //单命令
-                if (to_lower(trim(parts[0])) == string("read_help")) {
+                if (command == "read_help") {
                     serial.printf("%s\n", read_help().c_str());
                     goto loop;
                 }
-                if (to_lower(trim(parts[0])) == "read_tip" &&
+                if ((command == "read_tip") &&
                     current_setting.locked == LOCKED255) {
                     serial.printf("%s\n", current_setting.passwordTip.data());
                     goto loop;
                 }
-                if (to_lower(trim(parts[0])) == "read_id") {
+                if (command == "read_id") {
                     serial.printf("%d\n", current_setting.id);
                     goto loop;
                 }
-                if (to_lower(trim(parts[0])) == "read_version") {
+                if (command == "read_version") {
                     serial.printf("%d\n", VERSION);
                     goto loop;
                 }
-                if (to_lower(trim(parts[0])) == "read_count" &&
+                if (command == "read_count" &&
                     current_setting.locked == LOCKED255) {
                     serial.printf("%d\n", TYPE);
                     goto loop;
                 }
-                if (to_lower(trim(parts[0])) == "write_init_setting") {  
+                if (command == "write_init_setting") {
                     // TODO:此处留下后门，在锁住也可以复位// LOCKED255 // & // & // current_setting.locked ==
                     write_init_setting();
                     // OkCommand("write_init_setting command
@@ -51,8 +51,8 @@ int main() {
                 }
             }
 
-            if (to_lower(trim(parts[0])) == "read_block" &&
-                current_setting.locked == LOCKED255) {                
+            if (command == "read_block" &&
+                current_setting.locked == LOCKED255) {
                 if (parts.size() == 2) {
                     string block_info;
                     if (read_block(parts[1], block_info)) {
@@ -61,7 +61,7 @@ int main() {
                     }
                 }
             }
-            if (to_lower(trim(parts[0])) == "read_response" &&
+            if (command == "read_response" &&
                 current_setting.locked == LOCKED255) {
                 // 命令、index、query_code
                 if (parts.size() == 3) {
@@ -73,8 +73,8 @@ int main() {
                 }                
             }
             // write command
-            if (to_lower(trim(parts[0])) == "write_dongle" &&
-                current_setting.locked == LOCKED255) {                
+            if (command == "write_dongle" &&
+                current_setting.locked == LOCKED255) {
                 if (parts.size() == 4 &&
                     write_dongle(parts[1], parts[2], parts[3])) {
                     OkCommand("write_password command OK!");
@@ -92,8 +92,8 @@ int main() {
                 }
             }
 
-            if (to_lower(trim(parts[0])) == "write_block" &&
-                current_setting.locked == LOCKED255) {                
+            if (command == "write_block" &&
+                current_setting.locked == LOCKED255) {
                 // 命令、密码、index、mode、max_try、seed
                 if (parts.size() == 6) {  
                     if (write_block(parts[1], parts[2], parts[3],
