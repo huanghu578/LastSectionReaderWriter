@@ -4,7 +4,9 @@ string read_help(){
     return titleStr + std::string(help_str)  + std::string(help_str2) + std::string(remark_str1) + std::string(remark_str2);
 }
 bool read_block(string index, string& block_info) {
-    if (canConvertToInt(index) && (1 <= std::stoi(index) <= TYPE)) {
+    if (canConvertToInt(index) &&
+        (1 <= std::stoi(index)) && 
+        (std::stoi(index) <= TYPE)) {
         int idx = std::stoi(index);
         block_info =
             "Block " + to_string(idx) +
@@ -17,7 +19,8 @@ bool read_block(string index, string& block_info) {
     return false;
 }
 bool read_response(string index, string query_code, uint64_t& response) {
-    if (canConvertToInt(index) && (1 <= std::stoi(index) <= TYPE)) {
+    if (canConvertToInt(index) && (1 <= std::stoi(index)) &&
+        (std::stoi(index) <= TYPE)) {
         int idx = std::stoi(index);
         if (current_setting.blocks[idx-1].mode==MODE0) {
             if (current_setting.blocks[idx - 1].current_try >
@@ -84,7 +87,8 @@ bool write_block(string current_password,
     if ((current_password == string(current_setting.password.data(),
                                     current_setting.password.size())) &&
         canConvertToInt(index) && canConvertToInt(max_try) &&
-        canConvertToInt(seed) && (1 <= std::stoi(index) <= TYPE)) {
+        canConvertToInt(seed) && (1 <= std::stoi(index)) &&
+        (std::stoi(index) <= TYPE)) {
         if ((mode == "0" || mode == "1")) {
             int idx = std::stoi(index);
             uint8_t m = mode == "0" ? 0 : 255;
