@@ -1,8 +1,7 @@
 #include "main.h"
 USBSerial serial(true, VID, PID, RID);
 DigitalOut led(LED1);
-void WrongCommand(string s);
-void OkCommand(string s);
+
 int main() {
 #ifdef ENABLE_FLASH_PROTECT
     ReadoutProtection(ENABLE);
@@ -125,12 +124,4 @@ int main() {
         led = !led;
         ThisThread::sleep_for(2s);  // 人为增加密码尝试间隔,以增加爆破的难度
     }
-}
-void WrongCommand(string s) {
-    serial.printf("%s ", wrong_command);
-    serial.printf("%s\n", s.c_str());
-}
-void OkCommand(string s) {
-    serial.printf("%s ", command_ok);
-    serial.printf("%s\n", s.c_str());
 }

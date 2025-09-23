@@ -42,7 +42,7 @@ bool read_response(string index, string query_code, uint64_t& response) {
     }
     return false;
 }
-#ifdef __MBED__
+
 bool write_dongle(string current_password,
                   string new_password,
                   string new_tip) {
@@ -115,4 +115,12 @@ bool write_init_setting(){
     write_current_setting();
     return true;
 }
-#endif
+
+void WrongCommand(string s) {
+    serial.printf("%s ", wrong_command);
+    serial.printf("%s\n", s.c_str());
+}
+void OkCommand(string s) {
+    serial.printf("%s ", command_ok);
+    serial.printf("%s\n", s.c_str());
+}

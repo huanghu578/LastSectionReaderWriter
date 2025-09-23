@@ -2,10 +2,8 @@
 #pragma once
 #include <inttypes.h>
 #include <array>
-#ifdef __MBED__
 #include "TgMbedHelper.h"
 #include "mbed.h"
-#endif
 #include <time.h>
 #include <cstdio>
 #include <string>
@@ -46,7 +44,7 @@ void read_current_setting();
 
 extern setting_t current_setting;
 
-#ifdef __MBED__
+
 class LastSectionReaderWriter : private FlashIAP {
    public:
     LastSectionReaderWriter();
@@ -64,4 +62,3 @@ class LastSectionReaderWriter : private FlashIAP {
     uint32_t _whereToWrite;
     bool _eraseLastSector();
 };
-#endif

@@ -30,7 +30,7 @@ void InitCurrentSetting() {
         current_setting.blocks[seed-1] = {MODE255, INIT_MAX_TRY, 0, seed};
     }
 }
-#ifdef __MBED__
+
 void write_current_setting(){
     auto f = new LastSectionReaderWriter();
     f->WriteCurrentSetting();
@@ -98,4 +98,3 @@ void LastSectionReaderWriter::ReadCurrentSetting() {
         TG_DEBUG_FILE_FUN_LINE(ok);
     #endif  
 }
-#endif

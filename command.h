@@ -12,3 +12,6 @@ bool read_response(string index, string query_code, uint64_t& response);
 bool write_dongle(string current_password,string new_password,string new_tip);
 bool write_block(string current_password, string index, string mode, string max_try, string seed);
 bool write_init_setting();
+
+void WrongCommand(string s);
+void OkCommand(string s);
