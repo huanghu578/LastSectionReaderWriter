@@ -11,6 +11,7 @@ int main() {
     }
 #endif
     read_current_setting();
+    serial.sync();
     while (1) {
         uint8_t ptr[800];//783=256*3+13
         uint32_t readLen;
