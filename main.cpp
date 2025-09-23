@@ -18,8 +18,9 @@ int main() {
         std::string serialRead(reinterpret_cast<const char*>(&ptr[0]), readLen);
         vector<string> parts = split(serialRead, " ");
         if (readLen > 0) {
+            serial.printf("%s\n", to_lower(trim(parts[0])).c_str());
             if (parts.size() == 1){ //单命令
-                if (to_lower(trim(parts[0])) == "read_help") {
+                if (to_lower(trim(parts[0])) == string("read_help")) {
                     serial.printf("%s\n", read_help().c_str());
                     goto loop;
                 }
@@ -124,4 +125,13 @@ int main() {
         led = !led;
         ThisThread::sleep_for(2s);  // 人为增加密码尝试间隔,以增加爆破的难度
     }
+}
+
+void WrongCommand(string s) {
+    serial.printf("%s ", wrong_command);
+    serial.printf("%s\n", s.c_str());
+}
+void OkCommand(string s) {
+    serial.printf("%s ", command_ok);
+    serial.printf("%s\n", s.c_str());
 }

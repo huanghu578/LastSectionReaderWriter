@@ -18,7 +18,7 @@
 #define PID 0x4321
 #define RID 0x0001
 #define VERSION 202608
-#define TYPE 100  // 类型,不同档次产品的区分
+#define TYPE 10  // 类型,不同档次产品的区分
 #define MAX_PASSWORD_TIME 10
 #define MAX_BYTES_TO_PASSWORD 256
 #define AUTO_INIT_CURRENT_SETTING_ID 0xFFFFFFFF

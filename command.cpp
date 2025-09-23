@@ -115,12 +115,3 @@ bool write_init_setting(){
     write_current_setting();
     return true;
 }
-
-void WrongCommand(string s) {
-    serial.printf("%s ", wrong_command);
-    serial.printf("%s\n", s.c_str());
-}
-void OkCommand(string s) {
-    serial.printf("%s ", command_ok);
-    serial.printf("%s\n", s.c_str());
-}
