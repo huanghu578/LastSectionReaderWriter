@@ -1,7 +1,8 @@
 #include "main.h"
 USBSerial serial(true, VID, PID, RID);
 DigitalOut led(LED1);
-
+uint8_t ptr[800]={0};//uint8_t ptr[800];//783=256*3+13
+uint32_t readLen;
 int main() {
 #ifdef ENABLE_FLASH_PROTECT
     ReadoutProtection(ENABLE);
@@ -9,31 +10,39 @@ int main() {
         LedLongOn(led);
     }
 #endif
-    read_current_setting();    
-    while (1) {
-        uint8_t ptr[800];//783=256*3+13
-        uint32_t readLen;
+    read_current_setting(); 
+    serial.attach([](){
         serial.receive_nb((ptr), sizeof(ptr), &readLen);
-        std::string serialRead(reinterpret_cast<const char*>(&ptr[0]), readLen);
-        vector<string> parts = split(serialRead, " ");
-        if (readLen > 0) {
-            auto command = to_lower(trim(parts[0]));
-            serial.printf("%s\n", command.c_str());
-            if (parts.size() == 1){ //单命令
+    });
+    while (1) {        
+        if (readLen > 0) {             
+            std::string serialRead=string((char*)ptr);
+            serialRead[readLen]='\0';
+            vector<string> parts1 = split_by_space(serialRead);
+            vector<string> parts=Vs2Vs(parts1);             
+            auto c1 =to_lower((parts[0]));
+            auto c=c1.c_str();
+            auto command=string(c);
+            serial.printf("%s\n",command.c_str());
+            for(auto c:parts){
+                serial.printf("%s,",c.c_str());
+            }
+            serial.printf("\n");
+            if (parts.size() == 1){ //单命令                
                 if (command == "read_help") {
                     serial.printf("%s\n", read_help().c_str());
                     goto loop;
-                }
-                if ((command == "read_tip") &&
+                }                
+                if ((command == "read_tip") && 
                     current_setting.locked == LOCKED255) {
                     serial.printf("%s\n", current_setting.passwordTip.data());
                     goto loop;
                 }
-                if (command == "read_id") {
+                if (command=="read_id") {
                     serial.printf("%d\n", current_setting.id);
                     goto loop;
                 }
-                if (command == "read_version") {
+                if (command == "read_ver") {
                     serial.printf("%d\n", VERSION);
                     goto loop;
                 }
@@ -43,12 +52,9 @@ int main() {
                     goto loop;
                 }
                 if (command == "write_init_setting") {
-                    // TODO:此处留下后门，在锁住也可以复位// LOCKED255 // & // & // current_setting.locked ==
                     write_init_setting();
-                    // OkCommand("write_init_setting command
-                    // OK!");//因为此命令是close的，所以不应该反馈
                     goto loop;
-                }
+                } 
             }
 
             if (command == "read_block" &&
@@ -69,6 +75,8 @@ int main() {
                     if (read_response(parts[1], parts[2], response)) {
                         serial.printf("%llu\n", response);
                         goto loop;
+                    }else {
+                        serial.printf("read_response false\n");
                     }
                 }                
             }
@@ -103,8 +111,7 @@ int main() {
                         OkCommand("write_block command OK!");
                         goto loop;
                     }
-                    if (parts[1] !=
-                        string(current_setting.password.data())) {
+                    if (parts[1] !=string(current_setting.password.data())) {
                         // 密码错误,可能有人爆破
                         current_setting.password_try_time += 1;
                         write_init_setting();
@@ -114,10 +121,13 @@ int main() {
                     }
                 }
             }
+
             WrongCommand("command or parameter err!");
             goto loop;
         }
     loop:
+        readLen=0;
+        memset(ptr, 0, sizeof(ptr)); // 将所有元素设置为0
         if (current_setting.password_try_time == MAX_PASSWORD_TIME) {
             current_setting.locked = LOCKED0;
             write_init_setting();

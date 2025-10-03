@@ -9,7 +9,7 @@ std::string titleStr = R"(
 )";
 
 const char* help_str =
-    "USB Super Serial Dongle. version %d.\n\
+    "USB Super Serial Dongle.\n\
 read command:\n\
     read_help = get help.\n\
     read_tip = get password tip.\n\
@@ -23,8 +23,9 @@ const char* help_str2="write command:\n\
 const char* remark_str1="\
 parts of these commands are separated by spaces, and all these parameters must not contain spaces.\n\
 when using the write_XXX command, the current password must be correct.\n";
-const char* remark_str2="if the current password is entered incorrectly %d consecutive times, the dongle will be permanently locked.\n";
+const char* remark_str2="if the current password is wrong 10 times consecutively, the dongle will be permanently locked.\n";
 
 const char* wrong_password="current password error count:%d.\n";
 const char* wrong_command="wrong command,please input read_help for help.";
 const char* command_ok="command success.";
+

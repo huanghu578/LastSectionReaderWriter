@@ -8,9 +8,10 @@ bool read_block(string index, string& block_info) {
         (1 <= std::stoi(index)) && 
         (std::stoi(index) <= TYPE)) {
         int idx = std::stoi(index);
+        auto mode=current_setting.blocks[idx - 1].mode ? string("1(lifetime license mode)"):string("0(pay-per-use mode)");
         block_info =
             "Block " + to_string(idx) +
-            ": Mode:" + to_string(current_setting.blocks[idx - 1].mode) +
+            ": Mode:" + mode +
             ", Max Try:" + to_string(current_setting.blocks[idx - 1].max_try) +
             ", Current Try:" + to_string(current_setting.blocks[idx - 1].current_try) +
             ", Block Seed:xxx";

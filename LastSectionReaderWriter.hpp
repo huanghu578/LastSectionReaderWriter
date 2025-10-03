@@ -7,21 +7,21 @@
 #include <time.h>
 #include <cstdio>
 #include <string>
-#define LOCKED0 0x00    // 已锁定
-#define LOCKED255 0xFF  // 未锁定
-#define MODE0 0x00      // 次数模式
-#define MODE255 0xFF    // 正常模式
-#define INIT_MAX_TRY 20
-#define INIT_PASSWORD "197001010000000"
-#define INIT_TIP "TIME_STAMP_OF_UNIX"
-#define VID 0x1234
-#define PID 0x4321
-#define RID 0x0001
-#define VERSION 202608
-#define TYPE 10  // 类型,不同档次产品的区分
-#define MAX_PASSWORD_TIME 10
-#define MAX_BYTES_TO_PASSWORD 256
-#define AUTO_INIT_CURRENT_SETTING_ID 0xFFFFFFFF
+#define INIT_PASSWORD   "197001010000000" 
+#define INIT_TIP        "TIME_STAMP_OF_UNIX"
+constexpr uint16_t INIT_MAX_TRY=20;
+constexpr uint8_t LOCKED0= 0x00;    // 已锁定
+constexpr uint8_t LOCKED255= 0xFF;  // 未锁定
+constexpr uint8_t MODE0= 0x00;      // 次数模式
+constexpr uint8_t MODE255=0xFF;    // 正常模式
+constexpr uint16_t VID=0x1234;
+constexpr uint16_t PID=0x4321;
+constexpr uint16_t RID=0x0001;
+constexpr int VERSION=202608;
+constexpr uint8_t TYPE=20;  // 类型,不同档次产品的区分
+constexpr uint8_t MAX_PASSWORD_TIME=10;
+constexpr uint8_t MAX_BYTES_TO_PASSWORD=255;
+constexpr int AUTO_INIT_CURRENT_SETTING_ID=0xFFFFFFFF;
 using namespace std;
 typedef struct {
     uint8_t mode;
