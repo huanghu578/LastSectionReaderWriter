@@ -15,3 +15,6 @@
 #include "USBSerial.h"
 #include "mbed.h"
 #include "defense.h"
+
+void WrongCommand(string s);
+void OkCommand(string s);

@@ -26,6 +26,12 @@ when using the write_XXX command, the current password must be correct.\n";
 
 
 const char* wrong_password="current password error count:%d.\n";
-const char* wrong_command="wrong command,please input read_help for help.";
+const char* wrong_command="wrong command,please input read_help for help. Perhaps it is due to the following reasons:\n\
+1. Password and tip exceed 256 bytes; \n\
+2. The number or form of parameters does not meet the requirements; \n\
+3. The mode can only be 0 or 1; \n\
+4. The block index is not in numerical form or out of range; \n\
+5. When writing about dongle, the information before and after is the same; \n\
+6. When writing blocks, the information before and after is the same.\n";
 const char* command_ok="command success.";
 

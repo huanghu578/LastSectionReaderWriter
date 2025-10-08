@@ -22,7 +22,7 @@
 using std::string;
 using std::vector;
 using std::stringstream;
-void remove_invisible_chars(std::string& str);
+//void remove_invisible_chars(std::string& str);
 string trim(const string& str);
 bool startsWith(const string& str, const string& prefix);
 string to_lower(string str);

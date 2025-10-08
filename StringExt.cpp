@@ -1,5 +1,6 @@
 #include "StringExt.h" 
-void remove_invisible_chars(std::string& str) {
+
+void _remove_invisible_chars(std::string& str) {
     str.erase(std::remove_if(str.begin(), str.end(), [](char c) {        
         return (c < 32 ) || (c > 126); 
     }), str.end());
@@ -10,7 +11,7 @@ vector<string> split_by_space(const string& str) {
     stringstream ss(str);
     string tmp; 
     while (std::getline(ss, tmp, ' ')) {
-        remove_invisible_chars(tmp);
+        _remove_invisible_chars(tmp);
         string token = trim(tmp);
 		if (!token.empty() && token!=string("\n")) { // 检查是否为空字符串
 			tokens.push_back(token);

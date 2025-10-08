@@ -17,68 +17,59 @@ int main() {
     while (1) {        
         if (readLen > 0) {             
             std::string serialRead=string((char*)ptr);
-            serialRead[readLen]='\0';
+            //serialRead[readLen]='\0';
             vector<string> parts = split_by_space(serialRead);                        
-            auto c1 =to_lower((parts[0]));
-            auto c=c1.c_str();
-            auto command=string(c);
+            auto command =to_lower((parts[0]));            
             serial.printf("%s\n",command.c_str());
             for(auto c:parts){
                 serial.printf("%s,",c.c_str());
             }
             serial.printf("\n");
             if (parts.size() == 1){ //单命令                
-                if (command == "read_help") {
-                    serial.printf("%s\n", read_help().c_str());
+                if (command == "read_help" || command == "help") {
+                    serial.printf("%s\n", (titleStr + string(help_str)  + string(help_str2) + string(remark_str)).c_str());
                     goto loop;
-                }                
-                if ((command == "read_tip") ) {
+                }
+                if ((command == "read_tip" || command == "tip") ) {
                     serial.printf("%s\n", current_setting.passwordTip.data());
                     goto loop;
                 }
-                if (command=="read_id") {
+                if (command=="read_id" || command == "id") {
                     serial.printf("%d\n", current_setting.id);
                     goto loop;
                 }
-                if (command == "read_ver") {
+                if (command == "read_ver" || command == "ver") {
                     serial.printf("%d\n", VERSION);
                     goto loop;
                 }
-                if (command == "read_count") {
+                if (command == "read_count" || command == "count") {
                     serial.printf("%d\n", TYPE);
                     goto loop;
                 }
-                if (command == "write_init_setting") {
-                    write_init_setting();
-                    goto loop;
-                } 
             }
-
-            if (command == "read_block" ) {
-                if (parts.size() == 2) {
-                    string block_info;
-                    if (read_block(parts[1], block_info)) {
-                        serial.printf("%s\n", block_info.c_str());
-                        goto loop;
-                    }
+            if (parts.size() == 1 && (command == "write_init_setting" || command == "init")) {
+                write_init_setting();
+                goto loop;
+            } 
+            if (parts.size() == 2 && (command == "read_block" || command == "block")) {
+                string block_info;
+                if (read_block(parts[1], block_info)) {
+                    serial.printf("%s\n", block_info.c_str());
+                    goto loop;
                 }
             }
-            if (command == "read_response" ) {
+
+            if (parts.size() == 3 && command == "read_response" ) {
                 // 命令、index、query_code
-                if (parts.size() == 3) {
-                    uint64_t response;
-                    if (read_response(parts[1], parts[2], response)) {
-                        serial.printf("%llu\n", response);
-                        goto loop;
-                    }else {
-                        serial.printf("read_response false\n");
-                    }
-                }                
+                uint64_t response;
+                if (read_response(parts[1], parts[2], response)) {
+                    serial.printf("%llu\n", response);
+                    goto loop;
+                }             
             }
             // write command
-            if (command == "write_dongle" ) {
-                if (parts.size() == 4 &&
-                    write_dongle(parts[1], parts[2], parts[3])) {
+            if (parts.size() == 4 && command == "write_dongle" ) {
+                if (write_dongle(parts[1], parts[2], parts[3])) {
                     OkCommand("write_password command OK!");
                     current_time=0;
                     goto loop;
@@ -92,26 +83,23 @@ int main() {
                 }
             }
 
-            if (command == "write_block") {
+            if (parts.size() == 6 && command == "write_block") {
                 // 命令、密码、index、mode、max_try、seed
-                if (parts.size() == 6) {  
-                    if (write_block(parts[1], parts[2], parts[3],
-                                    parts[4], parts[5])) {                        
-                        current_time=0;  
-                        OkCommand("write_block command OK!");
-                        goto loop;
-                    }
-                    if (parts[1] !=string(current_setting.password.data())) {
-                        // 密码错误,可能有人爆破
-                        current_time += 1;
-                        //write_init_setting();
-                        serial.printf(wrong_password,current_time);
-                        goto loop;
-                    }
+                if (write_block(parts[1], parts[2], parts[3],
+                                parts[4], parts[5])) {                        
+                    current_time=0;  
+                    OkCommand("write_block command OK!");
+                    goto loop;
+                }
+                if (parts[1] !=string(current_setting.password.data())) {
+                    // 密码错误,可能有人爆破
+                    current_time += 1;
+                    //write_init_setting();
+                    serial.printf(wrong_password,current_time);
+                    goto loop;
                 }
             }
-
-            WrongCommand("command or parameter err!");
+            WrongCommand("");
             goto loop;
         }
     loop:

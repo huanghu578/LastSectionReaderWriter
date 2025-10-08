@@ -1,8 +1,11 @@
 #include "command.h"
 #include "hash.h"
-string read_help(){
-    return titleStr + string(help_str)  + string(help_str2) + string(remark_str);
+bool write_init_setting(){
+    InitCurrentSetting();
+    write_current_setting();
+    return true;
 }
+
 bool read_block(string index, string& block_info) {
     if (canConvertToInt(index) &&
         (1 <= std::stoi(index)) && 
@@ -10,7 +13,7 @@ bool read_block(string index, string& block_info) {
         int idx = std::stoi(index);
         auto mode=current_setting.blocks[idx - 1].mode ? string("1(lifetime license mode)") : string("0(pay-per-use mode)");
         block_info =
-            "Block " + to_string(idx) +
+            "Block " + index +
             ": Mode:" + mode +
             ", Max Try:" + to_string(current_setting.blocks[idx - 1].max_try) +
             ", Current Try:" + to_string(current_setting.blocks[idx - 1].current_try) +
@@ -19,6 +22,7 @@ bool read_block(string index, string& block_info) {
     }
     return false;
 }
+
 bool read_response(string index, string query_code, uint64_t& response) {
     if (canConvertToInt(index) && (1 <= std::stoi(index)) &&
         (std::stoi(index) <= TYPE)) {
@@ -47,52 +51,39 @@ bool read_response(string index, string query_code, uint64_t& response) {
 bool write_dongle(string current_password,
                   string new_password,
                   string new_tip) {
-    if ((current_password == string(current_setting.password.data(),
-                                    current_setting.password.size())) &&
-        (current_password.size() < MAX_BYTES_TO_PASSWORD) &&
-        (new_password.size() < MAX_BYTES_TO_PASSWORD) &&
-        (new_tip.size() < MAX_BYTES_TO_PASSWORD)) {
-        if (current_password == new_password &&
-            new_tip == current_setting.passwordTip.data()) {
-            return false;  // 密码、提示前后相同，不应该写flash
-        }
-        
-        const char* src = new_password.c_str();
-        std::copy(src, src + new_password.length() + 1,
-                  current_setting.password.begin());  // 包括'\0'
-        const char* src2 = new_tip.c_str();
-        std::copy(src2, src2 + new_tip.length() + 1,
-                  current_setting.passwordTip.begin());  // 包括'\0'
-
-        /* for (int i = 0; i < parameters[2].length(); i++) {
-            current_setting.password[i] = parameters[2][i];
-        }
-        current_setting.password[parameters[2].length()] ='\0';
-        for (int i = 0; i < parameters[3].length(); i++) {
-            current_setting.passwordTip[i] =
-                parameters[3][i];
-        }
-        current_setting.passwordTip[parameters[3].length()] = '\0';
-        */
-
+    if (current_password.size()>MAX_BYTES_TO_PASSWORD || 
+        new_password.size()>MAX_BYTES_TO_PASSWORD || 
+        new_tip.size()>MAX_BYTES_TO_PASSWORD) {
+        return false;
+    }
+    if (current_password == new_password &&
+        new_tip == current_setting.passwordTip) {
+        return false;  // 密码、提示前后相同，不应该写flash
+    }
+    if (current_password == current_setting.password) {
+        current_setting.password = new_password;
+        current_setting.passwordTip = new_tip;
         write_current_setting();
         return true;
     }
     return false;
 }
+
 bool write_block(string current_password,
                  string index,
                  string mode,
                  string max_try,
                  string seed) {
-    if ((current_password == string(current_setting.password.data(),
-                                    current_setting.password.size())) &&
+    if (current_password.size()>MAX_BYTES_TO_PASSWORD) {
+        return false;
+    }
+    if ((current_password == current_setting.password) &&
         canConvertToInt(index) && canConvertToInt(max_try) &&
         canConvertToInt(seed) && (1 <= std::stoi(index)) &&
         (std::stoi(index) <= TYPE)) {
         if ((mode == "0" || mode == "1")) {
             int idx = std::stoi(index);
-            uint8_t m = mode == "0" ? 0 : 255;
+            uint8_t m = mode == "0" ? MODE0 : MODE255;
             int mt = std::stoi(max_try);
             int s = std::stoi(seed);
             if(current_setting.blocks[idx-1].mode==m &&
@@ -109,10 +100,4 @@ bool write_block(string current_password,
         }
     }
     return false;
-}
-
-bool write_init_setting(){
-    InitCurrentSetting();
-    write_current_setting();
-    return true;
 }

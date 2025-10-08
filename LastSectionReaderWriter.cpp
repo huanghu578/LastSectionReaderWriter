@@ -3,8 +3,8 @@
 
 setting_t current_setting;
 void PrintCurrentSetting() {
-    printf("Password:%s \n", current_setting.password.data());    
-    printf("Password Tip:%s \n", current_setting.passwordTip.data()); 
+    printf("Password:%s, ", current_setting.password.c_str());    
+    printf("Password Tip:%s, ", current_setting.passwordTip.c_str()); 
     printf("ID: %d\n", current_setting.id);
     for (uint16_t i = 1; i <= TYPE; i++) {
         auto mode=current_setting.blocks[i - 1].mode ? "1(lifetime license mode)" : "0(pay-per-use mode)";
@@ -17,8 +17,8 @@ void PrintCurrentSetting() {
 }
 
 void InitCurrentSetting() {
-    std::copy(INIT_PASSWORD, INIT_PASSWORD + sizeof(INIT_PASSWORD), current_setting.password.begin()); // +1,包括'\0'
-    std::copy(INIT_TIP, INIT_TIP + sizeof(INIT_TIP), current_setting.passwordTip.begin()); // +1,包括'\0'
+    current_setting.password = INIT_PASSWORD;
+    current_setting.passwordTip = INIT_TIP;
     current_setting.id =djb2(to_string((uint32_t)time(NULL)));
     for (uint8_t seed = 1; seed <= TYPE; seed++)
     {
