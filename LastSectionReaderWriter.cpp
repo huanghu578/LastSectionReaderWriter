@@ -1,12 +1,13 @@
 #include "LastSectionReaderWriter.hpp"
 #include <cstring>
+
 setting_t current_setting;
 void PrintCurrentSetting() {
     printf("Password:%s \n", current_setting.password.data());    
     printf("Password Tip:%s \n", current_setting.passwordTip.data()); 
     printf("ID: %d\n", current_setting.id);
     for (uint16_t i = 1; i <= TYPE; i++) {
-        auto mode=current_setting.blocks[i - 1].mode ? string("1(lifetime license mode)"):string("0(pay-per-use mode)");
+        auto mode=current_setting.blocks[i - 1].mode ? "1(lifetime license mode)" : "0(pay-per-use mode)";
         printf("Block %zu: Mode:%s, Max Try:%d, Current Try:%d, Block Seed:xxx\n", 
                 i,
                 mode,
@@ -16,12 +17,8 @@ void PrintCurrentSetting() {
 }
 
 void InitCurrentSetting() {
-    const char* src = INIT_PASSWORD;
-    string srcs=string(src);    
-    std::copy(src, src + srcs.length() + 1, current_setting.password.begin()); // +1,包括'\0'
-    const char* src2 = INIT_TIP;
-    string srcs2=string(src2);
-    std::copy(src2, src2 + srcs2.length() + 1, current_setting.passwordTip.begin()); // +1,包括'\0'    
+    std::copy(INIT_PASSWORD, INIT_PASSWORD + sizeof(INIT_PASSWORD), current_setting.password.begin()); // +1,包括'\0'
+    std::copy(INIT_TIP, INIT_TIP + sizeof(INIT_TIP), current_setting.passwordTip.begin()); // +1,包括'\0'
     current_setting.id =djb2(to_string((uint32_t)time(NULL)));
     for (uint8_t seed = 1; seed <= TYPE; seed++)
     {

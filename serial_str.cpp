@@ -29,5 +29,3 @@ const char* wrong_password="current password error count:%d.\n";
 const char* wrong_command="wrong command,please input read_help for help.";
 const char* command_ok="command success.";
 
-const string INIT_PASSWORD="197001010000000";
-const string INIT_TIP="TIME_STAMP_OF_UNIX";
