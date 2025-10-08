@@ -18,8 +18,7 @@ int main() {
         if (readLen > 0) {             
             std::string serialRead=string((char*)ptr);
             serialRead[readLen]='\0';
-            vector<string> parts = split_by_space(serialRead);
-            //vector<string> parts=Vs2Vs(parts1);             
+            vector<string> parts = split_by_space(serialRead);                        
             auto c1 =to_lower((parts[0]));
             auto c=c1.c_str();
             auto command=string(c);
@@ -33,8 +32,7 @@ int main() {
                     serial.printf("%s\n", read_help().c_str());
                     goto loop;
                 }                
-                if ((command == "read_tip") && 
-                    current_setting.locked == LOCKED255) {
+                if ((command == "read_tip") ) {
                     serial.printf("%s\n", current_setting.passwordTip.data());
                     goto loop;
                 }
@@ -46,8 +44,7 @@ int main() {
                     serial.printf("%d\n", VERSION);
                     goto loop;
                 }
-                if (command == "read_count" &&
-                    current_setting.locked == LOCKED255) {
+                if (command == "read_count") {
                     serial.printf("%d\n", TYPE);
                     goto loop;
                 }
@@ -57,8 +54,7 @@ int main() {
                 } 
             }
 
-            if (command == "read_block" &&
-                current_setting.locked == LOCKED255) {
+            if (command == "read_block" ) {
                 if (parts.size() == 2) {
                     string block_info;
                     if (read_block(parts[1], block_info)) {
@@ -67,8 +63,7 @@ int main() {
                     }
                 }
             }
-            if (command == "read_response" &&
-                current_setting.locked == LOCKED255) {
+            if (command == "read_response" ) {
                 // 命令、index、query_code
                 if (parts.size() == 3) {
                     uint64_t response;
@@ -81,8 +76,7 @@ int main() {
                 }                
             }
             // write command
-            if (command == "write_dongle" &&
-                current_setting.locked == LOCKED255) {
+            if (command == "write_dongle" ) {
                 if (parts.size() == 4 &&
                     write_dongle(parts[1], parts[2], parts[3])) {
                     OkCommand("write_password command OK!");
@@ -98,8 +92,7 @@ int main() {
                 }
             }
 
-            if (command == "write_block" &&
-                current_setting.locked == LOCKED255) {
+            if (command == "write_block") {
                 // 命令、密码、index、mode、max_try、seed
                 if (parts.size() == 6) {  
                     if (write_block(parts[1], parts[2], parts[3],
@@ -123,11 +116,7 @@ int main() {
         }
     loop:
         readLen=0;
-        memset(ptr, 0, sizeof(ptr)); // 将所有元素设置为0
-        /* if (current_setting.password_try_time == MAX_PASSWORD_TIME) {
-            current_setting.locked = LOCKED0;
-            write_init_setting();
-        } */
+        memset(ptr, 0, sizeof(ptr)); // 将所有元素设置为0        
         led = !led;
         //ThisThread::sleep_for(2s);  // 人为增加密码尝试间隔,以增加爆破的难度
         delay_for_defense();
