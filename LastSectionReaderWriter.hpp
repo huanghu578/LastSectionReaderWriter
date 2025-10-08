@@ -2,26 +2,27 @@
 #pragma once
 #include <inttypes.h>
 #include <array>
-#include "TgMbedHelper.h"
-#include "mbed.h"
 #include <time.h>
 #include <cstdio>
 #include <string>
-#define INIT_PASSWORD   "197001010000000" 
-#define INIT_TIP        "TIME_STAMP_OF_UNIX"
-constexpr uint16_t INIT_MAX_TRY=20;
-constexpr uint8_t LOCKED0= 0x00;    // 已锁定
-constexpr uint8_t LOCKED255= 0xFF;  // 未锁定
-constexpr uint8_t MODE0= 0x00;      // 次数模式
-constexpr uint8_t MODE255=0xFF;    // 正常模式
+#include "TgMbedHelper.h"
+#include "mbed.h"
+
+constexpr uint8_t MAX_BYTES_TO_PASSWORD=255;
+constexpr int AUTO_INIT_CURRENT_SETTING_ID=0xFFFFFFFF;
 constexpr uint16_t VID=0x1234;
 constexpr uint16_t PID=0x4321;
 constexpr uint16_t RID=0x0001;
 constexpr int VERSION=202608;
+//constexpr uint8_t LOCKED0= 0x00;    // 已锁定
+//constexpr uint8_t LOCKED255= 0xFF;  // 未锁定
+//constexpr uint8_t MAX_PASSWORD_TIME=10;
 constexpr uint8_t TYPE=20;  // 类型,不同档次产品的区分
-constexpr uint8_t MAX_PASSWORD_TIME=10;
-constexpr uint8_t MAX_BYTES_TO_PASSWORD=255;
-constexpr int AUTO_INIT_CURRENT_SETTING_ID=0xFFFFFFFF;
+constexpr uint16_t INIT_MAX_TRY=20;
+constexpr uint8_t MODE0= 0x00;      // 次数模式
+constexpr uint8_t MODE255=0xFF;    // 正常模式
+
+
 using namespace std;
 typedef struct {
     uint8_t mode;
@@ -34,8 +35,8 @@ typedef struct {
     array<char, MAX_BYTES_TO_PASSWORD> password;
     array<char, MAX_BYTES_TO_PASSWORD> passwordTip;
     uint32_t id;  // 作为自动初始化标记，当0xFFFFFFFF时，表示未初始化
-    uint8_t locked;
-    uint8_t password_try_time;
+    //uint8_t locked;
+    //uint8_t password_try_time;
     array<block_t, TYPE> blocks;  // 用block的数量来区分档次
 } setting_t;
 void InitCurrentSetting();

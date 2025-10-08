@@ -1,5 +1,5 @@
 #include "serial_str.h"
-std::string titleStr = R"(	
+string titleStr = R"(	
  _   _ ____  ____    ____            _       _   ____                    _      
 | | | / ___|| __ )  / ___|  ___ _ __(_) __ _| | |  _ \  ___  _ __   __ _| | ___ 
 | | | \___ \|  _ \  \___ \ / _ \ '__| |/ _` | | | | | |/ _ \| '_ \ / _` | |/ _ \
@@ -20,12 +20,14 @@ const char* help_str2="write command:\n\
     write_password C P T = when giving current password(C) is correct, change password(P) and tip(T).\n\
     write_block C X M T S = when giving current password(C) is correct, according to the index of the target block(X), change mode(M), MAX_TIME(T), and seed(S).\n";
 
-const char* remark_str1="\
+const char* remark_str="\
 parts of these commands are separated by spaces, and all these parameters must not contain spaces.\n\
 when using the write_XXX command, the current password must be correct.\n";
-const char* remark_str2="if the current password is wrong 10 times consecutively, the dongle will be permanently locked.\n";
+
 
 const char* wrong_password="current password error count:%d.\n";
 const char* wrong_command="wrong command,please input read_help for help.";
 const char* command_ok="command success.";
 
+const string INIT_PASSWORD="197001010000000";
+const string INIT_TIP="TIME_STAMP_OF_UNIX";

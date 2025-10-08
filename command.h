@@ -4,6 +4,8 @@
 #include "LastSectionReaderWriter.hpp"
 #include "StringExt.h"
 #include "serial_str.h"
+#include <string>
+using std::string;
 using namespace std; 
 string read_help();
 //所有的判断（参数合法性、密码正确性、是否锁定等）都在此完成，所以才传递string类型的参数
