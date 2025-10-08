@@ -7,6 +7,7 @@
 #include <string>
 #include "TgMbedHelper.h"
 #include "mbed.h"
+#include "hash.h"
 const string INIT_PASSWORD="197001010000000";
 const string INIT_TIP="TIME_STAMP_OF_UNIX";
 constexpr uint8_t MAX_BYTES_TO_PASSWORD=255;
