@@ -1,8 +1,5 @@
 #include "main.h"
-USBSerial serial(true, VID, PID, RID);
 DigitalOut led(LED1);
-uint8_t ptr[800]={0};//uint8_t ptr[800];//783=256*3+13
-uint32_t readLen;
 int main() {
 #ifdef ENABLE_FLASH_PROTECT
     ReadoutProtection(ENABLE);
@@ -10,112 +7,96 @@ int main() {
         LedLongOn(led);
     }
 #endif
-    read_current_setting(); 
-    serial.attach([](){
-        serial.receive_nb((ptr), sizeof(ptr), &readLen);
-    });
-    while (1) {        
-        if (readLen > 0) {             
-            std::string serialRead=string((char*)ptr);
-            //serialRead[readLen]='\0';
-            vector<string> parts = split_by_space(serialRead);                        
-            auto command =to_lower((parts[0]));            
-            serial.printf("%s\n",command.c_str());
-            for(auto c:parts){
-                serial.printf("%s,",c.c_str());
-            }
-            serial.printf("\n");
-            if (parts.size() == 1){ //单命令                
-                if (command == "read_help" || command == "help") {
-                    serial.printf("%s\n", (titleStr + string(help_str)  + string(help_str2) + string(remark_str)).c_str());
+    read_current_setting();
+    serial_init();
+    while (1) {
+        if (data_ready) {
+            vector<string> parts = split_by_space(received_data);
+            data_ready = false;
+            received_data.clear();
+            auto command = to_lower((parts[0]));
+            if (parts.size() == 1) {  // 单命令
+                if (command == "help") {
+                    serial.printf("%s\n", AsciiArtStr.c_str());
+                    serial.printf("%s\n", help_str.c_str());
                     goto loop;
                 }
-                if ((command == "read_tip" || command == "tip") ) {
-                    serial.printf("%s\n", current_setting.passwordTip.data());
+                if (command == "tip") {
+                    serial.printf("%s\n", current_setting.passwordTip.c_str());
                     goto loop;
                 }
-                if (command=="read_id" || command == "id") {
+                if (command == "id") {
                     serial.printf("%d\n", current_setting.id);
                     goto loop;
                 }
-                if (command == "read_ver" || command == "ver") {
+                if (command == "ver") {
                     serial.printf("%d\n", VERSION);
                     goto loop;
                 }
-                if (command == "read_count" || command == "count") {
+                if (command == "blocks") {
                     serial.printf("%d\n", TYPE);
                     goto loop;
                 }
             }
-            if (parts.size() == 1 && (command == "write_init_setting" || command == "init")) {
+            if (parts.size() == 1 &&
+                (command ==
+                 "write_init_setting")) {  // 此命令不能简写，防止用户猜到
                 write_init_setting();
                 goto loop;
-            } 
-            if (parts.size() == 2 && (command == "read_block" || command == "block")) {
+            }
+            if (parts.size() == 2 && (command == "block")) {
                 string block_info;
-                if (read_block(parts[1], block_info)) {
+                if (block(parts[1], block_info)) {
                     serial.printf("%s\n", block_info.c_str());
                     goto loop;
                 }
             }
-
-            if (parts.size() == 3 && command == "read_response" ) {
+            if (parts.size() == 3 && (command == "query")) {
                 // 命令、index、query_code
                 uint64_t response;
-                if (read_response(parts[1], parts[2], response)) {
+                if (query(parts[1], parts[2], response)) {
                     serial.printf("%llu\n", response);
                     goto loop;
-                }             
+                }
             }
             // write command
-            if (parts.size() == 4 && command == "write_dongle" ) {
+            if (parts.size() == 4 && command == "write_dongle") {
                 if (write_dongle(parts[1], parts[2], parts[3])) {
-                    OkCommand("write_password command OK!");
-                    current_time=0;
+                    OkCommand(command);                    
                     goto loop;
                 }
-                if (parts[1] != string(current_setting.password.data())) {
+                if (parts[1] != current_setting.password) {
                     // 密码错误,可能有人爆破
                     current_time += 1;
-                    //write_init_setting();
-                    serial.printf(wrong_password,current_time);
+                    serial.printf(wrong_password, current_time);
                     goto loop;
                 }
             }
-
             if (parts.size() == 6 && command == "write_block") {
                 // 命令、密码、index、mode、max_try、seed
-                if (write_block(parts[1], parts[2], parts[3],
-                                parts[4], parts[5])) {                        
-                    current_time=0;  
-                    OkCommand("write_block command OK!");
+                if (write_block(parts[1], parts[2], parts[3], parts[4],
+                                parts[5])) {                    
+                    OkCommand(command);
                     goto loop;
                 }
-                if (parts[1] !=string(current_setting.password.data())) {
+                if (parts[1] != current_setting.password) {
                     // 密码错误,可能有人爆破
                     current_time += 1;
-                    //write_init_setting();
-                    serial.printf(wrong_password,current_time);
+                    serial.printf(wrong_password, current_time);
                     goto loop;
                 }
             }
-            WrongCommand("");
-            goto loop;
+            WrongCommand();
         }
     loop:
-        readLen=0;
-        memset(ptr, 0, sizeof(ptr)); // 将所有元素设置为0        
         led = !led;
-        //ThisThread::sleep_for(2s);  // 人为增加密码尝试间隔,以增加爆破的难度
         delay_for_defense();
     }
 }
-
-void WrongCommand(string s) {
-    serial.printf("%s ", wrong_command);
-    serial.printf("%s\n", s.c_str());
+void WrongCommand() {
+    serial.printf(wrong_command.c_str());
 }
-void OkCommand(string s) {
-    serial.printf("%s ", command_ok);
-    serial.printf("%s\n", s.c_str());
+void OkCommand(string commane) {
+    current_time = 0;
+    serial.printf("%s ", (command + string(" OK!")).c_str());
 }

@@ -5,8 +5,7 @@ bool write_init_setting(){
     write_current_setting();
     return true;
 }
-
-bool read_block(string index, string& block_info) {
+bool block(string index, string& block_info) {
     if (canConvertToInt(index) &&
         (1 <= std::stoi(index)) && 
         (std::stoi(index) <= TYPE)) {
@@ -22,12 +21,11 @@ bool read_block(string index, string& block_info) {
     }
     return false;
 }
-
-bool read_response(string index, string query_code, uint64_t& response) {
+bool query(string index, string query_code, uint64_t& response) {
     if (canConvertToInt(index) && (1 <= std::stoi(index)) &&
         (std::stoi(index) <= TYPE)) {
         int idx = std::stoi(index);
-        if (current_setting.blocks[idx-1].mode==MODE0) {
+        if (current_setting.blocks[idx - 1].mode == MODE_PAY_PER_USE) {
             if (current_setting.blocks[idx - 1].current_try >
                 current_setting.blocks[idx - 1].max_try) {//达到最大次数后，不可以使用，也不增加次数以造成无谓的写flash
                 return false;
@@ -35,7 +33,7 @@ bool read_response(string index, string query_code, uint64_t& response) {
             current_setting.blocks[idx-1].current_try+=1;
             write_current_setting();
         }
-        uint32_t seed = djb2(current_setting.password.data());
+        uint32_t seed = djb2(current_setting.password);
         uint32_t p1 = MurmurHash2(query_code, seed);
         uint32_t p2 =
             fnv1a(to_string(current_setting.blocks[idx-1].block_seed));
@@ -47,7 +45,6 @@ bool read_response(string index, string query_code, uint64_t& response) {
     }
     return false;
 }
-
 bool write_dongle(string current_password,
                   string new_password,
                   string new_tip) {
@@ -83,7 +80,7 @@ bool write_block(string current_password,
         (std::stoi(index) <= TYPE)) {
         if ((mode == "0" || mode == "1")) {
             int idx = std::stoi(index);
-            uint8_t m = mode == "0" ? MODE0 : MODE255;
+            uint8_t m = mode == "0" ? MODE_PAY_PER_USE : MODE_LIFTIME;
             int mt = std::stoi(max_try);
             int s = std::stoi(seed);
             if(current_setting.blocks[idx-1].mode==m &&

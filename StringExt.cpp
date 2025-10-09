@@ -5,7 +5,6 @@ void _remove_invisible_chars(std::string& str) {
         return (c < 32 ) || (c > 126); 
     }), str.end());
 }
-
 vector<string> split_by_space(const string& str) {    
     vector<string> tokens;
     stringstream ss(str);
@@ -19,8 +18,19 @@ vector<string> split_by_space(const string& str) {
 	}
     return tokens;
 }
-
-
+string to_lower(string str) {
+    string s;
+    transform(str.begin(), str.end(), s.begin(), ::tolower);
+    return s;
+}
+bool canConvertToInt(const std::string& str) {
+    char* end;
+    long num = std::strtol(str.c_str(), &end, 10);
+    if (end == str.c_str() || *end != '\0' || errno == ERANGE) {
+        return false;
+    }
+    return true;
+}
 string trim(const string& str) {
     auto begin = find_if_not(str.begin(), str.end(), [](unsigned char c) {
         return isspace(c);
@@ -30,30 +40,9 @@ string trim(const string& str) {
     }).base();    
     return string(begin, end);
 }
-
-bool startsWith(const string& str, const string& prefix) {
+/* bool startsWith(const string& str, const string& prefix) {
     return str.find(prefix) == 0;
 }
-
-
-string to_lower(string str){
-    string s;
-    transform(str.begin(),str.end(),s.begin(),::tolower); 
-    return s;   
-}
-bool canConvertToInt(const std::string& str) {
-    char* end;
-    long num = std::strtol(str.c_str(), &end, 10);
-    if (end == str.c_str() || *end != '\0' || errno == ERANGE) {
-        return false; 
-    }
-    return true;
-}
-
-//判断字符串是否包含某字符串
-//@params:str:大的字符串
-//@params:contains_str:所包含的字符串
-//@return: false:未包含 true：包含
 bool  IsContainsStr(string str,string contains_str){
 	string::size_type idx = str.find(contains_str);
 	if (idx!=string::npos)	{
@@ -62,7 +51,4 @@ bool  IsContainsStr(string str,string contains_str){
 	else	{
 		return false;
 	}
-}
-
-
-
+} */

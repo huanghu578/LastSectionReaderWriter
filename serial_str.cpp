@@ -1,5 +1,5 @@
 #include "serial_str.h"
-string titleStr = R"(	
+string AsciiArtStr = R"(	
  _   _ ____  ____    ____            _       _   ____                    _      
 | | | / ___|| __ )  / ___|  ___ _ __(_) __ _| | |  _ \  ___  _ __   __ _| | ___ 
 | | | \___ \|  _ \  \___ \ / _ \ '__| |/ _` | | | | | |/ _ \| '_ \ / _` | |/ _ \
@@ -8,30 +8,23 @@ string titleStr = R"(
                                                                    |___/        															   
 )";
 
-const char* help_str =
-    "USB Super Serial Dongle.\n\
-read command:\n\
-    read_help = get help.\n\
-    read_tip = get password tip.\n\
-    read_id = get id of dongle.\n\
-    read_count = get count of blocks.\n\
-    read_block X = get information of block X.\n";
-const char* help_str2="write command:\n\
-    write_password C P T = when giving current password(C) is correct, change password(P) and tip(T).\n\
-    write_block C X M T S = when giving current password(C) is correct, according to the index of the target block(X), change mode(M), MAX_TIME(T), and seed(S).\n";
+const string help_str = R"(USB Super Serial Dongle.command:
+help = get help.
+tip = get password tip.
+id = get id of dongle.
+blocks = get count of blocks.
+block index = get information of block index.
+query index query_string = get hash value from block no. index according query_string.
+write_dongle password new_password new_tip = write new_password & new_tip to dongle by checking password. 
+write_block password index mode max_time seed = write mode,max_try,seed to block no. index by checking password.
+parts of these commands are separated by spaces, and all these parameters must not contain spaces.)";
 
-const char* remark_str="\
-parts of these commands are separated by spaces, and all these parameters must not contain spaces.\n\
-when using the write_XXX command, the current password must be correct.\n";
+const string wrong_command =R"(wrong command,please input help for more information. 
+Please check:
+a.index must be positive integer and  within the range.
+b.password,new_password,new_tip must less than 256 bytes.
+c.mode must be 1 or 0. 1 means lifetime license mode, and 0 means pay-per-use mode.
+d.max_time must be 16 bit positive integer. The maximum number of trials for the current block, when mode 0.
+e.seed must be 32 bit positive integer.)";
 
-
-const char* wrong_password="current password error count:%d.\n";
-const char* wrong_command="wrong command,please input read_help for help. Perhaps it is due to the following reasons:\n\
-1. Password and tip exceed 256 bytes; \n\
-2. The number or form of parameters does not meet the requirements; \n\
-3. The mode can only be 0 or 1; \n\
-4. The block index is not in numerical form or out of range; \n\
-5. When writing about dongle, the information before and after is the same; \n\
-6. When writing blocks, the information before and after is the same.\n";
-const char* command_ok="command success.";
-
+const char* wrong_password = "current password error count:%d.\n";
