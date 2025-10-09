@@ -1,4 +1,4 @@
-SerialReader,从串口读取string
+SerialReader,从串口读取string。如果用\n or \r作为帧间隔，就会强制要求用户输入帧间隔，这样用户体验不好。改用字符间隙来作为帧间隔，用线程读取输入。
 StringExt,将string分割成命令及参数
 command，处理命令及参数
 LastSectionReaderWriter，读写flash

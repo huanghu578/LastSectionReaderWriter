@@ -14,7 +14,7 @@ const string INIT_TIP = "TIME_STAMP_OF_UNIX";
 constexpr uint8_t MAX_BYTES_TO_PASSWORD = 255;
 constexpr int AUTO_INIT_CURRENT_SETTING_ID = 0xFFFFFFFF;
 constexpr int VERSION = 202608;
-constexpr uint8_t TYPE = 40;  // 类型,不同档次产品的区分
+constexpr uint8_t TYPE = 20;  // 类型,不同档次产品的区分
 constexpr uint16_t INIT_MAX_TRY = 20;
 constexpr uint8_t MODE_PAY_PER_USE = 0;    // 次数模式
 constexpr uint8_t MODE_LIFTIME = 1;  // 正常模式
@@ -26,8 +26,8 @@ typedef struct {
 } block_t;  // TODO:结合RAM，考虑在block_t中增加密码及其提示
 
 typedef struct {
-    string password;
-    string passwordTip;
+    array<char,MAX_BYTES_TO_PASSWORD> password;
+    array<char,MAX_BYTES_TO_PASSWORD> passwordTip;
     uint32_t id;  // 作为自动初始化标记，当0xFFFFFFFF时，表示未初始化    
     array<block_t, TYPE> blocks;  // 用block的数量来区分档次
 } setting_t;

@@ -3,24 +3,36 @@ constexpr uint16_t VID = 0x1234;
 constexpr uint16_t PID = 0x4321;
 constexpr uint16_t RID = 0x0001;
 USBSerial serial(true, VID, PID, RID);
-volatile std::string received_data;
+std::string received_data;
 volatile bool data_ready = false;
-void serial_rx_isr() {
-    while (serial.readable() && !data_ready) {//有数据已经准备好时，不能读入//TODO:是否应该丢弃
-        char c;
-        if (serial.read(&c, 1) > 0) {
-            if (c == '\n' || c == '\r') {
-                // 遇到结束符，标记数据就绪
-                if (!received_data.empty()) {
-                    data_ready = true;
+Thread serial_thread;
+Timeout flipper;
+constexpr std::chrono::milliseconds FRAME_INTERVAL(200);
+
+void worker() {
+    while(1){
+        while (serial.readable() && !data_ready) {//有数据已经准备好时，不能读入//TODO:是否应该丢弃
+            flipper.attach([](){
+                received_data += '\0';
+                data_ready = true;
+            },FRAME_INTERVAL);
+            char c;
+            if (serial.read(&c, 1) > 0) {
+                if (c == '\n' || c == '\r') {
+                    // 遇到结束符，标记数据就绪
+                    received_data += '\0';
+                    if (!received_data.empty()) {
+                        data_ready = true;
+                    }
+                } else {
+                    // 将字符添加到字符串
+                    received_data += c;
                 }
-            } else {
-                // 将字符添加到字符串
-                received_data += c;
             }
         }
+        ThisThread::sleep_for(10ms);
     }
 }
 void serial_init() {    
-    serial.sigio(callback(serial_rx_isr));
+    serial_thread.start(&worker);
 }

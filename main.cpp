@@ -12,17 +12,22 @@ int main() {
     while (1) {
         if (data_ready) {
             vector<string> parts = split_by_space(received_data);
-            data_ready = false;
-            received_data.clear();
+            
             auto command = to_lower((parts[0]));
+            for(auto c:parts){
+                serial.printf("%s,", c.c_str());
+            }
+            serial.printf("command:%s,parts[0].size:%d,parts.size:%d\n",parts[0].c_str(),parts[0].size(),parts.size());
             if (parts.size() == 1) {  // 单命令
-                if (command == "help") {
+                MBED_DEBUG_FILE_FUN_LINE(单命令);
+                if (command.find("help")!=string::npos) {
                     serial.printf("%s\n", AsciiArtStr.c_str());
                     serial.printf("%s\n", help_str.c_str());
                     goto loop;
                 }
-                if (command == "tip") {
-                    serial.printf("%s\n", current_setting.passwordTip.c_str());
+                if (command == string("tip")) {
+                    MBED_DEBUG_FILE_FUN_LINE(tip);
+                    serial.printf("%s\n", current_setting.passwordTip.data());
                     goto loop;
                 }
                 if (command == "id") {
@@ -65,7 +70,7 @@ int main() {
                     OkCommand(command);                    
                     goto loop;
                 }
-                if (parts[1] != current_setting.password) {
+                if (parts[1] != string(current_setting.password.data())) {
                     // 密码错误,可能有人爆破
                     current_time += 1;
                     serial.printf(wrong_password, current_time);
@@ -79,7 +84,7 @@ int main() {
                     OkCommand(command);
                     goto loop;
                 }
-                if (parts[1] != current_setting.password) {
+                if (parts[1] != string(current_setting.password.data())) {
                     // 密码错误,可能有人爆破
                     current_time += 1;
                     serial.printf(wrong_password, current_time);
@@ -89,6 +94,8 @@ int main() {
             WrongCommand();
         }
     loop:
+        data_ready = false;
+        received_data.clear();
         led = !led;
         delay_for_defense();
     }

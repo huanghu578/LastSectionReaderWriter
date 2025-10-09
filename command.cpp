@@ -33,7 +33,7 @@ bool query(string index, string query_code, uint64_t& response) {
             current_setting.blocks[idx-1].current_try+=1;
             write_current_setting();
         }
-        uint32_t seed = djb2(current_setting.password);
+        uint32_t seed = djb2(string(current_setting.password.data()));
         uint32_t p1 = MurmurHash2(query_code, seed);
         uint32_t p2 =
             fnv1a(to_string(current_setting.blocks[idx-1].block_seed));
@@ -54,12 +54,15 @@ bool write_dongle(string current_password,
         return false;
     }
     if (current_password == new_password &&
-        new_tip == current_setting.passwordTip) {
+        new_tip == string(current_setting.passwordTip.data())) {
         return false;  // 密码、提示前后相同，不应该写flash
     }
-    if (current_password == current_setting.password) {
-        current_setting.password = new_password;
-        current_setting.passwordTip = new_tip;
+    if (current_password == string(current_setting.password.data())) {
+        std::copy_n(new_password.begin(), new_password.size(), current_setting.password.begin());
+        current_setting.password[new_password.size()] = '\0'; // 确保字符串以null结尾
+        std::copy_n(new_tip.begin(), new_tip.size(), current_setting.passwordTip.begin());
+        current_setting.passwordTip[new_tip.size()] = '\0'; // 确保字符串以null结尾
+
         write_current_setting();
         return true;
     }
@@ -74,7 +77,7 @@ bool write_block(string current_password,
     if (current_password.size()>MAX_BYTES_TO_PASSWORD) {
         return false;
     }
-    if ((current_password == current_setting.password) &&
+    if ((current_password == string(current_setting.password.data())) &&
         canConvertToInt(index) && canConvertToInt(max_try) &&
         canConvertToInt(seed) && (1 <= std::stoi(index)) &&
         (std::stoi(index) <= TYPE)) {

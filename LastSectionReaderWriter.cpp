@@ -3,11 +3,11 @@
 
 setting_t current_setting;
 void PrintCurrentSetting() {
-    printf("Password:%s, ", current_setting.password.c_str());    
-    printf("Password Tip:%s, ", current_setting.passwordTip.c_str()); 
+    printf("Password:%s, ", current_setting.password.data());    
+    printf("Password Tip:%s, ", current_setting.passwordTip.data()); 
     printf("ID: %d\n", current_setting.id);
     for (uint16_t i = 1; i <= TYPE; i++) {
-        auto mode = current_setting.blocks[idx - 1].mode
+        auto mode = current_setting.blocks[i - 1].mode
                         ? string("1(lifetime license mode)")
                         : string("0(pay-per-use mode)");
         printf("Block %zu: Mode:%s, Max Try:%d, Current Try:%d, Block Seed:xxx\n", 
@@ -18,8 +18,10 @@ void PrintCurrentSetting() {
     }
 }
 void InitCurrentSetting() {
-    current_setting.password = INIT_PASSWORD;
-    current_setting.passwordTip = INIT_TIP;
+    std::copy_n(INIT_PASSWORD.begin(), INIT_PASSWORD.size(), current_setting.password.begin());
+    current_setting.password[INIT_PASSWORD.size()] = '\0'; // 确保字符串以null结尾
+    std::copy_n(INIT_TIP.begin(), INIT_TIP.size(), current_setting.passwordTip.begin());
+    current_setting.passwordTip[INIT_TIP.size()] = '\0'; // 确保字符串以null结尾
     current_setting.id =djb2(to_string((uint32_t)time(NULL)));
     for (uint8_t index = 1; index <= TYPE; index++) {
         current_setting.blocks[index - 1] = {MODE_LIFTIME, INIT_MAX_TRY, 0,
