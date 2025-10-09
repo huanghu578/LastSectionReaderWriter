@@ -94,9 +94,9 @@ int main() {
     }
 }
 void WrongCommand() {
-    serial.printf(wrong_command.c_str());
+    serial.printf("%s\n", wrong_command.c_str());
 }
-void OkCommand(string commane) {
+void OkCommand(string command) {
     current_time = 0;
-    serial.printf("%s ", (command + string(" OK!")).c_str());
+    serial.printf("%s\n", (command + string(" OK!")).c_str());
 }

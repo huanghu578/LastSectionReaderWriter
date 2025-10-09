@@ -17,4 +17,4 @@
 #include "serial_str.h"
 
 void WrongCommand();
-void OkCommand(string commane);
+void OkCommand(string command);

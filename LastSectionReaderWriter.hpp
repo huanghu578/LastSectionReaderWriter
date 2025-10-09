@@ -9,15 +9,15 @@
 #include "mbed.h"
 #include "hash.h"
 using namespace std;
-extern const string INIT_PASSWORD;
-extern const string INIT_TIP;
-extern constexpr uint8_t MAX_BYTES_TO_PASSWORD;
-extern constexpr int AUTO_INIT_CURRENT_SETTING_ID;
-extern constexpr int VERSION;
-extern constexpr uint8_t TYPE;  // 类型,不同档次产品的区分
-extern constexpr uint16_t INIT_MAX_TRY;
-extern constexpr uint8_t MODE_PAY_PER_USE;  // 次数模式
-extern constexpr uint8_t MODE_LIFTIME;  // 正常模式
+const string INIT_PASSWORD = "197001010000000";
+const string INIT_TIP = "TIME_STAMP_OF_UNIX";
+constexpr uint8_t MAX_BYTES_TO_PASSWORD = 255;
+constexpr int AUTO_INIT_CURRENT_SETTING_ID = 0xFFFFFFFF;
+constexpr int VERSION = 202608;
+constexpr uint8_t TYPE = 40;  // 类型,不同档次产品的区分
+constexpr uint16_t INIT_MAX_TRY = 20;
+constexpr uint8_t MODE_PAY_PER_USE = 0;    // 次数模式
+constexpr uint8_t MODE_LIFTIME = 1;  // 正常模式
 typedef struct {
     uint8_t mode;
     uint16_t max_try;
