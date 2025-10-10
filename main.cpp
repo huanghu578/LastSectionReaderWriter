@@ -21,8 +21,10 @@ int main() {
             if (parts.size() == 1) {  // 单命令
                 MBED_DEBUG_FILE_FUN_LINE(单命令);
                 if (command.find("help")!=string::npos) {
+                    CriticalSectionLock::enable();
                     serial.printf("%s\n", AsciiArtStr.c_str());
                     serial.printf("%s\n", help_str.c_str());
+                    CriticalSectionLock::disable();
                     goto loop;
                 }
                 if (command == string("tip")) {
@@ -30,7 +32,7 @@ int main() {
                     serial.printf("%s\n", current_setting.passwordTip.data());
                     goto loop;
                 }
-                if (command == "id") {
+                if (STRING_equal(command,string("id"))) {
                     serial.printf("%d\n", current_setting.id);
                     goto loop;
                 }
@@ -101,7 +103,9 @@ int main() {
     }
 }
 void WrongCommand() {
+    CriticalSectionLock::enable();
     serial.printf("%s\n", wrong_command.c_str());
+    CriticalSectionLock::disable();
 }
 void OkCommand(string command) {
     current_time = 0;

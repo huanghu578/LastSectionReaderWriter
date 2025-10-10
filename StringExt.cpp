@@ -1,5 +1,11 @@
 #include "StringExt.h" 
-
+bool STRING_equal(const string& s1,const string& s2){//TODO:因为mbed的string没有==操作符    
+    if(s1.size()!=s2.size()) return false;
+    for(int i=0;i<s1.size();i++){
+        if(s1[i]!=s2[i]) return false;
+    }
+    return true;
+}
 void _remove_invisible_chars(std::string& str) {
     str.erase(std::remove_if(str.begin(), str.end(), [](char c) {        
         return (c < 32 ) || (c > 126); 

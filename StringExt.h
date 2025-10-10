@@ -27,7 +27,7 @@ string trim(const string& str);
 string to_lower(string str);
 bool canConvertToInt(const string& str);
 vector<string> split_by_space(const string& str);
-
+bool STRING_equal(const string& s1,const string& s2);
 
 /* bool  IsContainsStr(string str,string contains_str);
 bool startsWith(const string& str, const string& prefix); */
